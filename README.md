@@ -1,6 +1,6 @@
-# acorn
+# Acorn
 
-WWC Hackathon Flutter 
+WWC Hackathon 2018 Flutter
 
 ## Getting Started
 

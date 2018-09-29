@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(16.0),
-                    child: new CardDefinitionView(word: word, definition: "definition"),
+                    child: new CardDefinitionView(word: word),
                   )
                 ),
               ],

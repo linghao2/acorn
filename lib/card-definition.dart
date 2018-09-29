@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'word_data.dart';
 
 class CardDefinitionView extends StatelessWidget {
-  const CardDefinitionView({ this.word, this.definition });
+  CardDefinitionView({ this.word }) {
+  }
 
   final String word;
-  final String definition;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +23,36 @@ class CardDefinitionView extends StatelessWidget {
             ),
           ),
           new Container(
-            margin: const EdgeInsets.all(16.0),
-            child: new Text(
-              definition,
-              softWrap: true,
+            margin: const EdgeInsets.only(left: 16.0, right: 16.0),
+            child: FutureBuilder(
+              future: WordData.fetchDefinition(word),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(snapshot.data.category,
+                          style: TextStyle(color: Colors.purple)
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 8.0),
+                        ),
+                        Text(snapshot.data.definitions[0]),
+                        Text(''),
+                      ],
+                    );
+//                    List<String> definitions = snapshot.data.definitions;
+//                    //return Text(snapshot.data.category);
+//                    return ListView(
+//                      children: [
+//                        Text(snapshot.data.category,
+//                          style: TextStyle(color: Colors.purple),),
+//                      ]
+//    );
+//    }
+                  }
+                  return CircularProgressIndicator();
+                }
             ),
           ),
         ],
