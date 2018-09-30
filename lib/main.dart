@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'card-definition.dart';
+import 'test_view.dart';
 
 void main() => runApp(new MyApp());
 
@@ -26,7 +27,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _words = ['anthelion', 'anthropology'];
+  final _words = ['anthelion', 'anthropology', 'dart', 'flutter'];
 
   Widget _buildList() {
     return ListView.builder(
@@ -60,16 +61,26 @@ class _MyHomePageState extends State<MyHomePage> {
             appBar: new AppBar(
               title: Text(word),
             ),
-            body: new Row(
-              children: [
+            body: new Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
                 Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    child: new CardDefinitionView(word: word),
-                  )
+                  child: new Row(
+                    children: [
+                      Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(16.0),
+                            child: new CardDefinitionView(word: word),
+                          )
+                      ),
+                    ],
+                  ),
+                ),
+                new Container(
+                  padding: EdgeInsets.only(bottom: 32.0),
                 ),
               ],
-            ),
+            )
           );
         },
       ),
@@ -78,7 +89,37 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _performTest() {
-    // TODO open test
+    Navigator.of(context).push(
+      new MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return new Scaffold(
+              appBar: new AppBar(
+                title: Text('Test'),
+              ),
+              body: new Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(
+                    child: new Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(16.0),
+                              child: new TestView(words: _words),
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(bottom: 32.0),
+                  ),
+                ],
+              )
+          );
+        },
+      ),
+    );
   }
 
   @override
