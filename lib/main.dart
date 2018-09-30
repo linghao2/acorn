@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'card-definition.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
+import 'material_search.dart';
 
 void main() => runApp(new MyApp());
 
@@ -26,9 +29,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _words = ['anthelion', 'anthropology'];
+  List<String> _words = ['anthelion', 'anthropology'];
+  List<String> _dictionaryValues = List<String>();
 
+  final _formKey = new GlobalKey<FormState>();
   Widget _buildList() {
+    _loadDictionary();
     return ListView.builder(
         padding: const EdgeInsets.all(0.0),
         itemCount: _words.length,
@@ -91,6 +97,65 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: _buildList(),
+        floatingActionButton: new FloatingActionButton(
+          onPressed: () {
+            _showMaterialSearch(context);
+          },
+          tooltip: 'Search',
+          child: new Icon(Icons.search),
+        )
     );
   }
+  _buildMaterialSearchPage(BuildContext context) {
+
+    return new MaterialPageRoute<String>(
+        settings: new RouteSettings(
+          name: 'material_search',
+          isInitialRoute: false,
+        ),
+        builder: (BuildContext context) {
+          return new Material(
+            child: new MaterialSearch<String>(
+              placeholder: 'Lookup your word',
+
+              results: _dictionaryValues.map((String v) => new MaterialSearchResult<String>(
+                icon: Icons.add,
+                value: v,
+                text: "$v",
+                  onSubmit: (String value) => Navigator.of(context).pop(value)
+              )).toList(),
+              filter: (dynamic value, String criteria) {
+                return value.toLowerCase().trim()
+                    .startsWith(new RegExp(r'' + criteria.toLowerCase().trim() + ''));
+              },
+              limit: 20,
+             // onSelect: (dynamic value) => Navigator.of(context).pop(value),
+              onSelect: (dynamic value) {
+                _pushDefinition(value);
+              },
+              onSubmit: (String value) => Navigator.of(context).pop(value),
+            ),
+          );
+        }
+    );
+  }
+
+  _showMaterialSearch(BuildContext context) {
+    Navigator.of(context)
+        .push(_buildMaterialSearchPage(context))
+        .then((dynamic value) {
+      setState(() {
+        if (!_words.contains(value)) {
+          _words.add(value);
+        }
+      });
+    });
+  }
+
+  _loadDictionary() async  {
+    String value =  await rootBundle.loadString('dictionary.txt');
+
+    _dictionaryValues = LineSplitter().convert(value);
+  }
+
 }
