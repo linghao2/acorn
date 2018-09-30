@@ -21,6 +21,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		9BDE75731C586E3A38167735 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF84BAEFBF32DAC046870313 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +57,7 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DF84BAEFBF32DAC046870313 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,25 +68,18 @@
 				9705A1C61CF904A100538489 /* Flutter.framework in Frameworks */,
 				3B80C3941E831B6300D905FE /* App.framework in Frameworks */,
 				4102A04499ABE9B3D80F92AC /* Pods_Runner.framework in Frameworks */,
+				9BDE75731C586E3A38167735 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		47E3370DE518F365658728E9 /* Pods */ = {
+		846A231C8DC3D9A5BA02A83D /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Pods;
-			sourceTree = "<group>";
-		};
-		870A5457FABC30557FA2FFD1 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				1556E82C128232B0C3302966 /* Pods_Runner.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
@@ -107,8 +102,8 @@
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
-				47E3370DE518F365658728E9 /* Pods */,
-				870A5457FABC30557FA2FFD1 /* Frameworks */,
+				846A231C8DC3D9A5BA02A83D /* Pods */,
+				EFC720BB1A533B0492E8428B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -141,6 +136,14 @@
 			children = (
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EFC720BB1A533B0492E8428B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF84BAEFBF32DAC046870313 /* Pods_Runner.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

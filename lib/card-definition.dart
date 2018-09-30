@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'word_data.dart';
 
 class CardDefinitionView extends StatelessWidget {
-  CardDefinitionView({ this.word }) {
-  }
+  CardDefinitionView({ this.word });
 
   final String word;
 
   @override
   Widget build(BuildContext context) {
     final _bigFont = const TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0);
-    return new Card(
-      child: new Column(
-        mainAxisSize: MainAxisSize.min,
+    return new Container(
+      child: new Card(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           new Container(
@@ -28,7 +28,7 @@ class CardDefinitionView extends StatelessWidget {
               future: WordData.fetchDefinition(word),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return Column(
+                    return Column (
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(snapshot.data.category,
@@ -41,14 +41,15 @@ class CardDefinitionView extends StatelessWidget {
                         Text(''),
                       ],
                     );
-//                    List<String> definitions = snapshot.data.definitions;
-//                    //return Text(snapshot.data.category);
-//                    return ListView(
-//                      children: [
-//                        Text(snapshot.data.category,
-//                          style: TextStyle(color: Colors.purple),),
-//                      ]
-//    );
+                    //List<String> definitions = snapshot.data.definitions;
+                    //return Text(snapshot.data.category);
+//                    List<Widget> children = [
+//                      Text(snapshot.data.category,
+//                      style: TextStyle(color: Colors.purple),),
+//                    ];
+//                    return Column(
+//                          children: children
+//                    );
 //    }
                   }
                   return CircularProgressIndicator();
@@ -57,6 +58,7 @@ class CardDefinitionView extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

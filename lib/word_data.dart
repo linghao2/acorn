@@ -71,7 +71,6 @@ class WordData {
 
   static Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
-    print('_localpath: $directory');
     return directory.path;
   }
 
@@ -91,7 +90,6 @@ class WordData {
 
   static Future<bool> responseExists(String word) async {
     final path = await _localPath;
-    print('path: $path');
     File wordFile = File('$path/$word.txt');
     print('wordFile: $wordFile');
 

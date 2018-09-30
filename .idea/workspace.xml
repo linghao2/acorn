@@ -2,15 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="acccb270-eb5b-4c26-a7da-d1ac402ce4b5" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dictionary.txt" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/lib/material_search.dart" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/data/dictionary.txt" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/lib/flash_card.dart" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/lib/test_view.dart" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj" afterPath="$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner.xcworkspace/contents.xcworkspacedata" afterPath="$PROJECT_DIR$/ios/Runner.xcworkspace/contents.xcworkspacedata" />
+      <change beforePath="$PROJECT_DIR$/lib/card-definition.dart" afterPath="$PROJECT_DIR$/lib/card-definition.dart" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" afterPath="$PROJECT_DIR$/lib/main.dart" />
+      <change beforePath="$PROJECT_DIR$/lib/word_data.dart" afterPath="$PROJECT_DIR$/lib/word_data.dart" />
       <change beforePath="$PROJECT_DIR$/pubspec.lock" afterPath="$PROJECT_DIR$/pubspec.lock" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" afterPath="$PROJECT_DIR$/pubspec.yaml" />
     </list>
@@ -26,8 +26,8 @@
       <file leaf-file-name="main.dart" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/main.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-144">
-              <caret line="119" column="0" lean-forward="false" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+            <state relative-caret-position="359">
+              <caret line="45" column="11" lean-forward="true" selection-start-line="45" selection-start-column="11" selection-end-line="45" selection-end-column="11" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -35,14 +35,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="word_data.dart" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/word_data.dart">
+      <file leaf-file-name="project.pbxproj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="84">
-              <caret line="51" column="33" lean-forward="false" selection-start-line="51" selection-start-column="33" selection-end-line="51" selection-end-column="33" />
-              <folding>
-                <element signature="e#0#20#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="93">
+              <caret line="487" column="24" lean-forward="false" selection-start-line="487" selection-start-column="24" selection-end-line="487" selection-end-column="24" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -63,18 +61,6 @@
             <state relative-caret-position="174">
               <caret line="274" column="6" lean-forward="false" selection-start-line="274" selection-start-column="6" selection-end-line="274" selection-end-column="6" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="card-definition.dart" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/card-definition.dart">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="26" column="19" lean-forward="false" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
-              <folding>
-                <element signature="e#0#39#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -116,9 +102,21 @@
       <file leaf-file-name="pubspec.lock" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pubspec.lock">
           <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="339">
+              <caret line="285" column="20" lean-forward="false" selection-start-line="285" selection-start-column="20" selection-end-line="285" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_view.dart" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/test_view.dart">
+          <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
+              <folding>
+                <element signature="e#0#39#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -150,8 +148,8 @@
       <find>20</find>
       <find>name</find>
       <find>onpressed</find>
-      <find>pop</find>
       <find>onsubmit</find>
+      <find>pop</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -168,8 +166,10 @@
         <option value="$PROJECT_DIR$/lib/search.dart" />
         <option value="$USER_HOME$/development_flutter/flutter/.pub-cache/hosted/pub.dartlang.org/material_search-0.2.8/lib/material_search.dart" />
         <option value="$PROJECT_DIR$/pubspec.yaml" />
-        <option value="$PROJECT_DIR$/lib/main.dart" />
         <option value="$PROJECT_DIR$/lib/material_search.dart" />
+        <option value="$PROJECT_DIR$/pubspec.lock" />
+        <option value="$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj" />
+        <option value="$PROJECT_DIR$/lib/main.dart" />
       </list>
     </option>
   </component>
@@ -204,6 +204,17 @@
             <path>
               <item name="acorn" type="b2602c69:ProjectViewProjectNode" />
               <item name="acorn" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="acorn" type="b2602c69:ProjectViewProjectNode" />
+              <item name="acorn" type="462c0819:PsiDirectoryNode" />
+              <item name="ios" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="acorn" type="b2602c69:ProjectViewProjectNode" />
+              <item name="acorn" type="462c0819:PsiDirectoryNode" />
+              <item name="ios" type="462c0819:PsiDirectoryNode" />
+              <item name="Runner.xcodeproj" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="acorn" type="b2602c69:ProjectViewProjectNode" />
@@ -426,7 +437,9 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#0#39#0" expanded="false" />
+            <marker date="1538267638791" expanded="true" signature="2090:2095" ph="(...)" />
+            <marker date="1538267638791" expanded="true" signature="2090:2102" ph="(...)" />
           </folding>
         </state>
       </provider>
@@ -436,7 +449,7 @@
         <state relative-caret-position="30">
           <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="17" />
           <folding>
-            <element signature="e#0#20#0" expanded="true" />
+            <element signature="e#0#20#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -464,7 +477,9 @@
         <state relative-caret-position="164">
           <caret line="26" column="19" lean-forward="false" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
           <folding>
-            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#0#39#0" expanded="false" />
+            <marker date="1538267638791" expanded="true" signature="2090:2095" ph="(...)" />
+            <marker date="1538267638791" expanded="true" signature="2090:2102" ph="(...)" />
           </folding>
         </state>
       </provider>
@@ -474,7 +489,7 @@
         <state relative-caret-position="84">
           <caret line="51" column="33" lean-forward="false" selection-start-line="51" selection-start-column="33" selection-end-line="51" selection-end-column="33" />
           <folding>
-            <element signature="e#0#20#0" expanded="true" />
+            <element signature="e#0#20#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -505,22 +520,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pubspec.lock">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pubspec.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/development_flutter/flutter/packages/flutter/lib/src/widgets/container.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -539,10 +538,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/lib/test_view.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pubspec.lock">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="339">
+          <caret line="285" column="20" lean-forward="false" selection-start-line="285" selection-start-column="20" selection-end-line="285" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pubspec.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="93">
+          <caret line="487" column="24" lean-forward="false" selection-start-line="487" selection-start-column="24" selection-end-line="487" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/lib/main.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-144">
-          <caret line="119" column="0" lean-forward="false" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+        <state relative-caret-position="359">
+          <caret line="45" column="11" lean-forward="true" selection-start-line="45" selection-start-column="11" selection-end-line="45" selection-end-column="11" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
