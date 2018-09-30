@@ -54,15 +54,15 @@ class WordData {
   }
 
   static Future<WordDefinition> fetchDefinition(String word) async {
-    bool exists = await responseExists(word);
-    if (exists) {
-      String response = await readResponse(word);
-      return WordDefinition.fromJson(word, response);
-    }
+//    bool exists = await responseExists(word);
+//    if (exists) {
+//      String response = await readResponse(word);
+//      return WordDefinition.fromJson(word, response);
+//    }
     String url = WordData.getUrl(word);
     final response = await http.get(url, headers: WordData.getHeaders());
     if (response.statusCode == 200) {
-      writeResponse(word, response.body);
+      //writeResponse(word, response.body);
       return WordDefinition.fromJson(word, response.body);
     } else {
       throw Exception('Failed to load $word');

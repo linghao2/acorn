@@ -31,6 +31,7 @@ class FlashCardState extends State<FlashCard> {
         _toggleShowFront();
       },
       child: new Card(
+        color: new Color(0xFFFFF2B6),
         child: new Center(
           child: Text(
             widget.word,
@@ -48,7 +49,7 @@ class FlashCardState extends State<FlashCard> {
         print('definition was tapped $widget.word');
         _toggleShowFront();
       },
-      child: new CardDefinitionView(word: widget.word),
+      child: new CardDefinitionView(word: widget.word, isFlashCard: true),
     );
 
     print('show $widget.showFront');

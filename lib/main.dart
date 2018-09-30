@@ -14,7 +14,8 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: 'Acorn',
       theme: new ThemeData(
-        primarySwatch: Colors.blue,
+        //buttonColor: new Color(0xFFFFF2B6),
+        primaryColor: new Color(0xFFFFF2B6),
       ),
       home: new MyHomePage(title: 'Acorn'),
     );
@@ -32,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<String>_words = ['anthelion', 'anthropology', 'dart', 'flutter'];
+  List<String>_words = ['anthelion', 'anthropology'];
   List<String> _dictionaryValues = List<String>();
 
   final _formKey = new GlobalKey<FormState>();
@@ -53,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       trailing: new Icon(
         Icons.linear_scale,
-        color: Colors.lightBlue,
+        color: new Color(0xFFFFB20A),
       ),
       onTap: () {
         _pushDefinition(word);
@@ -145,6 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _showMaterialSearch(context);
           },
           tooltip: 'Search',
+          backgroundColor: new Color(0xFFFFB20A),
           child: new Icon(Icons.search),
         )
     );

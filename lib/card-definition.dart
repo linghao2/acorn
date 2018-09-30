@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'word_data.dart';
 
 class CardDefinitionView extends StatelessWidget {
-  CardDefinitionView({ this.word });
+  CardDefinitionView({ this.word, this.isFlashCard = false });
 
   final String word;
+  bool isFlashCard = false;
 
   @override
   Widget build(BuildContext context) {
     final _bigFont = const TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0);
     return new Container(
       child: new Card(
+        color: isFlashCard ? new Color(0xFFFFFAE1) : Colors.white,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
