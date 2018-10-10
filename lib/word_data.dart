@@ -1,40 +1,84 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-//import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
-class WordDefinition {
+class LexicalDefinition {
   String word;
   String category;
   List<String> definitions;
   String pronunciationUrl;
+  String pronunciationSpelling;
 
+  LexicalDefinition({this.word, this.category, this.definitions,
+    this.pronunciationUrl, this.pronunciationSpelling });
+}
+
+class WordDefinition {
+  String word;
   String json;
+  List<LexicalDefinition> entries;
 
-  WordDefinition({this.word, this.category, this.definitions, this.pronunciationUrl});
+  WordDefinition({this.word, this.entries });
 
   factory WordDefinition.fromJson(String word, String json) {
     const JsonDecoder decoder = const JsonDecoder();
     Map decoded = decoder.convert(json);
-    Map lexicalEntry = decoded['results'][0]['lexicalEntries'][0];
-    String category = lexicalEntry['lexicalCategory'];
-    Map pronunciation = lexicalEntry['pronunciations'][0];
-    String pronunciationUrl = pronunciation['audioFile'];
-    Map entry = lexicalEntry['entries'][0];
-    List<String> definitions = new List<String>();
-    for (Map sense in entry['senses']) {
-      String definition = sense['definitions'][0];
-      if (definition != null) {
-        definitions.add(definition);
+    List<LexicalDefinition> entries = List<LexicalDefinition>();
+
+    try {
+      for (Map lexicalEntry in decoded['results'][0]['lexicalEntries']) {
+
+        List<String> definitions = new List<String>();
+        String pronunciationUrl;
+        String pronunciationSpelling;
+        String category = lexicalEntry['lexicalCategory'];
+        var pronunciations = lexicalEntry['pronunciations'];
+
+        Map entry = lexicalEntry['entries'][0];
+
+        pronunciations = pronunciations == null ? entry['pronunciations'] : pronunciations;
+        if (pronunciations != null) {
+          for (Map pronunciation in pronunciations) {
+            pronunciationUrl = pronunciation['audioFile'];
+            pronunciationSpelling =  pronunciation['phoneticSpelling'];
+            print('pronunciationUrl $pronunciationUrl');
+            print('pronunciationSpelling $pronunciationSpelling');
+            if (pronunciationUrl != null && pronunciationSpelling != null) {
+              break;
+            }
+          }
+        }
+        // skip pronounciation if already exists
+        for (LexicalDefinition ent in entries) {
+          if (pronunciationUrl == ent.pronunciationUrl && pronunciationSpelling == ent.pronunciationSpelling) {
+            pronunciationUrl = null;
+            pronunciationSpelling = null;
+          }
+        }
+
+        for (Map sense in entry['senses']) {
+          String definition = sense['definitions'][0];
+          if (definition != null) {
+            definitions.add(definition);
+          }
+        }
+
+        entries.add(LexicalDefinition(
+          word: word,
+          category: category,
+          definitions: definitions,
+          pronunciationUrl: pronunciationUrl,
+          pronunciationSpelling:pronunciationSpelling,
+        ));
       }
+    } catch (e) {
+      print('fromJson error $e');
     }
     return WordDefinition(
       word: word,
-      category: category,
-      definitions: definitions,
-      pronunciationUrl: pronunciationUrl,
+      entries: entries,
     );
   }
 }
@@ -54,17 +98,18 @@ class WordData {
   }
 
   static Future<WordDefinition> fetchDefinition(String word) async {
-//    bool exists = await responseExists(word);
-//    if (exists) {
-//      String response = await readResponse(word);
-//      return WordDefinition.fromJson(word, response);
-//    }
+    bool exists = await responseExists(word);
+    if (exists) {
+      String response = await readResponse(word);
+      return WordDefinition.fromJson(word, response);
+    }
     String url = WordData.getUrl(word);
     final response = await http.get(url, headers: WordData.getHeaders());
     if (response.statusCode == 200) {
-      //writeResponse(word, response.body);
+      writeResponse(word, response.body);
       return WordDefinition.fromJson(word, response.body);
     } else {
+      var code = response.statusCode;
       throw Exception('Failed to load $word');
     }
   }
@@ -91,7 +136,6 @@ class WordData {
   static Future<bool> responseExists(String word) async {
     final path = await _localPath;
     File wordFile = File('$path/$word.txt');
-    print('wordFile: $wordFile');
 
     return wordFile.exists();
   }

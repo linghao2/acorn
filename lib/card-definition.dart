@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 import 'word_data.dart';
 
 class CardDefinitionView extends StatelessWidget {
@@ -6,6 +8,69 @@ class CardDefinitionView extends StatelessWidget {
 
   final String word;
   bool isFlashCard = false;
+
+  List<Widget> _buildFlashCardDefinitions(List definitions) {
+    List<Widget> children = new List<Widget>();
+    for (int i = 0; i < definitions.length; i++) {
+      children.add(Row(
+        children: <Widget>[
+          Text(
+            '•',
+          ),
+          Container(
+            padding: EdgeInsets.only(right: 8.0),
+          ),
+          Expanded(
+            child: Text(
+              definitions[i],
+            ),
+          )
+        ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+      )
+      );
+      children.add(Container(
+        padding: EdgeInsets.only(bottom: 8.0),
+      ));
+    }
+    return children;
+  }
+
+  void playUrl(String url) async {
+    AudioPlayer.logEnabled = true;
+    AudioPlayer audioPlayer = new AudioPlayer();
+    int result = await audioPlayer.play(url);
+    if (result == 1) {
+      await audioPlayer.setReleaseMode(ReleaseMode.STOP);
+    }
+  }
+
+  Widget buildPronounciation(LexicalDefinition definition) {
+    if (definition.pronunciationSpelling != null) {
+      var widget = Row(
+        children: <Widget>[
+          Text(
+            '[' + definition.pronunciationSpelling + ']',
+            style: TextStyle(color: Colors.black45),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.speaker_phone,
+              color: definition.pronunciationUrl != null ? Colors.black : Colors.black26,
+            ),
+            onPressed: () {
+              playUrl(definition.pronunciationUrl);
+            },
+          ),
+          Container(
+            padding: EdgeInsets.only(bottom: 0.0),
+          ),
+        ],
+      );
+      return widget;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +83,7 @@ class CardDefinitionView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           new Container(
-            margin: const EdgeInsets.all(16.0),
+            margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
             child: new Text(
               word,
               style: _bigFont,
@@ -30,29 +95,34 @@ class CardDefinitionView extends StatelessWidget {
               future: WordData.fetchDefinition(word),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    WordDefinition wordDefinition = snapshot.data;
+                    List<Widget> children = new List<Widget>();
+
+                    for (LexicalDefinition definition in wordDefinition.entries) {
+                      // pronunciation
+                      var pronounciationWidget = buildPronounciation(definition);
+                      if (pronounciationWidget != null) {
+                        children.add(pronounciationWidget);
+                      }
+
+                      // category
+                      if (definition.category != null) {
+                        children.add(new Text(
+                            definition.category,
+                            style: TextStyle(color: Colors.purple)
+                        ));
+                        children.add(Container(
+                          padding: EdgeInsets.only(bottom: 8.0),
+                        ));
+                      }
+
+                      children.addAll(_buildFlashCardDefinitions(definition.definitions));
+                    }
+
                     return Column (
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(snapshot.data.category,
-                          style: TextStyle(color: Colors.purple)
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 8.0),
-                        ),
-                        Text(snapshot.data.definitions[0]),
-                        Text(''),
-                      ],
+                      children: children,
                     );
-                    //List<String> definitions = snapshot.data.definitions;
-                    //return Text(snapshot.data.category);
-//                    List<Widget> children = [
-//                      Text(snapshot.data.category,
-//                      style: TextStyle(color: Colors.purple),),
-//                    ];
-//                    return Column(
-//                          children: children
-//                    );
-//    }
                   }
                   return CircularProgressIndicator();
                 }

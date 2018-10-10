@@ -33,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<String>_words = ['anthelion', 'anthropology'];
+  List<String>_words = ['anthelion', 'anthropology', 'company', 'is'];
   List<String> _dictionaryValues = List<String>();
 
   final _formKey = new GlobalKey<FormState>();
