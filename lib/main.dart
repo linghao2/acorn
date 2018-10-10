@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
 import 'card-definition.dart';
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
 import 'material_search.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'settings.dart';
 import 'test_view.dart';
 
 
@@ -131,13 +132,54 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _settings() {
+    Navigator.of(context).push(
+      new MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return new Scaffold(
+            appBar: new AppBar(
+              title: Text('Settings'),
+              leading: IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: null),
+              actions: <Widget> [
+                new IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: (){
+                      Navigator.maybePop(context);
+                    }
+                ),
+              ],
+            ),
+
+            body: new Row(
+              children: [
+                Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(18.0),
+                      child: new SettingsView(),
+                    )
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
+        leading: IconButton(
+          icon: const Icon(Icons.dashboard),
+          onPressed: _performTest,
+        ),
         actions: <Widget> [
-          new IconButton(icon: const Icon(Icons.dashboard), onPressed: _performTest,)
+          new IconButton(icon: const Icon(Icons.settings), onPressed: _settings,)
         ],
       ),
       body: _buildList(),
