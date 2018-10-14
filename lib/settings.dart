@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/gestures.dart';
 
 class SettingsView extends StatelessWidget {
 
@@ -22,6 +23,7 @@ class MySettingsPage extends StatefulWidget {
 
 class _MySettingsPageState extends State<MySettingsPage>{
   bool _reminderValue = true;
+  bool _visible = true;
   int _wordCount = 4;
   String _interval = null;
   String _language = null;
@@ -35,6 +37,7 @@ class _MySettingsPageState extends State<MySettingsPage>{
   void _toggleOnChanged(bool value){
     setState(() {
       _reminderValue = value;
+      _visible = !_visible;
     });
   }
 
@@ -94,9 +97,13 @@ class _MySettingsPageState extends State<MySettingsPage>{
       ),
     );
 
+
     Widget reminderFrequency = Container(
         padding: EdgeInsets.only(top: 20.0),
-        child:Wrap(
+        child: AnimatedOpacity(
+          opacity:  _visible? 1.0 : 0.2,
+          duration: Duration(milliseconds: 100),
+          child:Wrap(
           children: <Widget>[
             Text('I will be accorning ',
                 style:new TextStyle (fontSize: 24.0)),
@@ -125,7 +132,8 @@ class _MySettingsPageState extends State<MySettingsPage>{
               onChanged: (String value){_intervalOnChanged(value);},
             ),
           ],
-        )
+        ),
+       )
     );
 
     Widget intervalInfo = Container(
@@ -140,8 +148,10 @@ class _MySettingsPageState extends State<MySettingsPage>{
                   new TextSpan(
                     text: 'Pimsleurs graduated interval recall',
                     style: new TextStyle(fontSize: 12.0, color: Colors.blue),
-                    //gesture recognition
-                  )
+                    recognizer: new TapGestureRecognizer() ..onTap = () {
+                      launch('https://en.wikipedia.org/wiki/Spaced_repetition');
+                    }
+                    ),
                 ]
             )
         )
