@@ -43,8 +43,6 @@ class WordDefinition {
           for (Map pronunciation in pronunciations) {
             pronunciationUrl = pronunciation['audioFile'];
             pronunciationSpelling =  pronunciation['phoneticSpelling'];
-            print('pronunciationUrl $pronunciationUrl');
-            print('pronunciationSpelling $pronunciationSpelling');
             if (pronunciationUrl != null && pronunciationSpelling != null) {
               break;
             }
@@ -110,7 +108,7 @@ class WordData {
       return WordDefinition.fromJson(word, response.body);
     } else {
       var code = response.statusCode;
-      throw Exception('Failed to load $word');
+      throw Exception('Failed to load $word: $code');
     }
   }
 

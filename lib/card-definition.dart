@@ -3,11 +3,16 @@ import 'package:audioplayers/audioplayers.dart';
 
 import 'word_data.dart';
 
+enum FeedbackScore {Unspecified, Yes, No, Maybe}
+
+typedef void OnNext(FeedbackScore score);
+
 class CardDefinitionView extends StatelessWidget {
-  CardDefinitionView({ this.word, this.isFlashCard = false });
+  CardDefinitionView({ this.word, this.isFlashCard = false, this.onNext });
 
   final String word;
-  bool isFlashCard = false;
+  final bool isFlashCard;
+  final OnNext onNext;
 
   List<Widget> _buildFlashCardDefinitions(List definitions) {
     List<Widget> children = new List<Widget>();
@@ -36,7 +41,7 @@ class CardDefinitionView extends StatelessWidget {
     return children;
   }
 
-  void playUrl(String url) async {
+  void _playUrl(String url) async {
     AudioPlayer.logEnabled = true;
     AudioPlayer audioPlayer = new AudioPlayer();
     int result = await audioPlayer.play(url);
@@ -45,7 +50,7 @@ class CardDefinitionView extends StatelessWidget {
     }
   }
 
-  Widget buildPronounciation(LexicalDefinition definition) {
+  Widget _buildPronounciation(LexicalDefinition definition) {
     if (definition.pronunciationSpelling != null) {
       var widget = Row(
         children: <Widget>[
@@ -59,7 +64,7 @@ class CardDefinitionView extends StatelessWidget {
               color: definition.pronunciationUrl != null ? Colors.black : Colors.black26,
             ),
             onPressed: () {
-              playUrl(definition.pronunciationUrl);
+              _playUrl(definition.pronunciationUrl);
             },
           ),
           Container(
@@ -70,6 +75,54 @@ class CardDefinitionView extends StatelessWidget {
       return widget;
     }
     return null;
+  }
+
+  Widget _buildIconButton(String iconPath, String text, FeedbackScore score) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          color: Colors.white,
+          child: MaterialButton(
+            minWidth: 60.0,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.only(bottom: 4.0),
+                  child: Image.asset(iconPath),
+                ),
+                Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 10.0,
+                  ),
+                ),
+              ],
+            ),
+            onPressed: () { onNext(score); },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFeedbackButtons() {
+    if (!isFlashCard) {
+      return Container();
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _buildIconButton('graphics/iconGotIt.png', 'Got it', FeedbackScore.Yes),
+          Container(width: 8.0),
+          _buildIconButton('graphics/iconNotSure.png', 'Not sure', FeedbackScore.Maybe),
+          Container(width: 8.0),
+          _buildIconButton('graphics/iconDontKnow.png', 'don\'t know', FeedbackScore.No),
+        ],
+      );
+    }
   }
 
   @override
@@ -89,8 +142,8 @@ class CardDefinitionView extends StatelessWidget {
               style: _bigFont,
             ),
           ),
-          new Container(
-            margin: const EdgeInsets.only(left: 16.0, right: 16.0),
+          new Expanded(
+            //margin: const EdgeInsets.only(left: 16.0, right: 16.0),
             child: FutureBuilder(
               future: WordData.fetchDefinition(word),
                 builder: (context, snapshot) {
@@ -100,7 +153,7 @@ class CardDefinitionView extends StatelessWidget {
 
                     for (LexicalDefinition definition in wordDefinition.entries) {
                       // pronunciation
-                      var pronounciationWidget = buildPronounciation(definition);
+                      var pronounciationWidget = _buildPronounciation(definition);
                       if (pronounciationWidget != null) {
                         children.add(pronounciationWidget);
                       }
@@ -119,14 +172,26 @@ class CardDefinitionView extends StatelessWidget {
                       children.addAll(_buildFlashCardDefinitions(definition.definitions));
                     }
 
-                    return Column (
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: children,
+                    return ListView.builder(
+                      itemCount: children.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            margin: EdgeInsets.only(left: 16.0, right: 16.0),
+                            child: children[index],
+                          );
+                        }
                     );
                   }
-                  return CircularProgressIndicator();
+                  return Container(
+                    padding: EdgeInsets.only(top: 16.0),
+                    child: CircularProgressIndicator(),
+                  );
                 }
             ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(8.0),
+            child: _buildFeedbackButtons(),
           ),
         ],
       ),
