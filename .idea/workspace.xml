@@ -1,27 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acccb270-eb5b-4c26-a7da-d1ac402ce4b5" name="Default" comment="Merge branch 'master' of https://github.com/linghao2/acorn&#10;&#10;# Conflicts:&#10;#&#9;.idea/libraries/Dart_Packages.xml&#10;#&#9;.idea/libraries/Flutter_Plugins.xml&#10;#&#9;.idea/workspace.xml&#10;#&#9;pubspec.lock&#10;#&#9;pubspec.yaml">
-      <change beforePath="" afterPath="$PROJECT_DIR$/graphics/iconDontKnow.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/graphics/iconGotIt.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/graphics/iconNotSure.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/lib/cover_flow.dart" />
-      <change beforePath="$PROJECT_DIR$/.idea/acorn.iml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="" />
+    <list default="true" id="acccb270-eb5b-4c26-a7da-d1ac402ce4b5" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/lib/card-definition.dart" afterPath="$PROJECT_DIR$/lib/card-definition.dart" />
-      <change beforePath="$PROJECT_DIR$/lib/flash_card.dart" afterPath="$PROJECT_DIR$/lib/flash_card.dart" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" afterPath="$PROJECT_DIR$/lib/main.dart" />
-      <change beforePath="$PROJECT_DIR$/lib/test_view.dart" afterPath="$PROJECT_DIR$/lib/test_view.dart" />
-      <change beforePath="$PROJECT_DIR$/lib/word_data.dart" afterPath="$PROJECT_DIR$/lib/word_data.dart" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" afterPath="$PROJECT_DIR$/pubspec.lock" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" afterPath="$PROJECT_DIR$/pubspec.yaml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -420,7 +401,14 @@
       <option name="project" value="LOCAL" />
       <updated>1539146868544</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Merge branch 'master' of https://github.com/linghao2/acorn&#10;&#10;# Conflicts:&#10;#&#9;.idea/libraries/Dart_Packages.xml&#10;#&#9;.idea/libraries/Flutter_Plugins.xml&#10;#&#9;.idea/workspace.xml&#10;#&#9;pubspec.lock&#10;#&#9;pubspec.yaml">
+      <created>1539793029541</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1539793029541</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TodoView">
