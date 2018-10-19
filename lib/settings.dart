@@ -105,22 +105,28 @@ class _MySettingsPageState extends State<MySettingsPage>{
           duration: Duration(milliseconds: 100),
           child:Wrap(
           children: <Widget>[
-            Text('I will be accorning ',
-                style:new TextStyle (fontSize: 24.0)),
-            new DropdownButton(
+            new Container(
+              margin: const EdgeInsets.only(top: 10.0),
+              child: new Text('I will be accorning  ', style:new TextStyle (fontSize: 24.0)),
+            ),
+            DropdownButton(
               value: _wordCount,
               iconSize: 30.0,
               items: _wordCountList.map((int value){
                 return DropdownMenuItem(
                     value: value,
                     child: new Text('${value}'));
-              }).toList(),
+                }).toList(),
               onChanged: (int value){_wordCountOnChanged(value);},
             ),
-            Text('words ',
-                style:new TextStyle (fontSize: 24.0)),
-            Text('every ',
-                style:new TextStyle (fontSize: 24.0)),
+            new Container(
+              margin: const EdgeInsets.only(top: 10.0),
+              child: new Text(' words ', style:new TextStyle (fontSize: 24.0)),
+             ),
+            new Container(
+              margin: const EdgeInsets.only(top: 10.0),
+              child: new Text('every  ', style:new TextStyle (fontSize: 24.0)),
+            ),
             new DropdownButton(
               value: _interval == ""? null : _interval,
               iconSize: 30.0,
