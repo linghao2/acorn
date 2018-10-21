@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'cover_flow.dart';
 import 'flash_card.dart';
-import 'card-definition.dart';
+import 'word_data.dart';
 
 class TestView extends StatelessWidget {
-  TestView({ this.words });
+  TestView({ this.wordInfos });
 
-  final List words;
+  final List<WordInfo> wordInfos;
   var cards = List();
   CoverFlow coverFlow;
 
@@ -16,7 +16,7 @@ class TestView extends StatelessWidget {
 
     coverFlow = new CoverFlow(
       itemBuilder: cardBuilder,
-      itemCount: words.length,
+      itemCount: wordInfos.length,
       dismissibleItems: false,
     );
 
@@ -28,15 +28,14 @@ class TestView extends StatelessWidget {
   }
 
   void _buildContainers() {
-    for (int i = 0; i < words.length; i++) {
-      var word = words[i];
+    for (int i = 0; i < wordInfos.length; i++) {
       var card = new FlashCard(
-        word: word,
+        wordInfo: wordInfos[i],
         count: i+1,
-        totalCount: words.length,
+        totalCount: wordInfos.length,
         showFront: true,
         onNext: (FeedbackScore score) {
-          print('$score');
+          wordInfos[i].scoreFeedback(score);
           coverFlow.nextPage();
         },
       );

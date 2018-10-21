@@ -3,14 +3,12 @@ import 'package:audioplayers/audioplayers.dart';
 
 import 'word_data.dart';
 
-enum FeedbackScore {Unspecified, Yes, No, Maybe}
-
 typedef void OnNext(FeedbackScore score);
 
 class CardDefinitionView extends StatelessWidget {
-  CardDefinitionView({ this.word, this.isFlashCard = false, this.onNext });
+  CardDefinitionView({ this.wordInfo, this.isFlashCard = false, this.onNext });
 
-  final String word;
+  final WordInfo wordInfo;
   final bool isFlashCard;
   final OnNext onNext;
 
@@ -49,7 +47,6 @@ class CardDefinitionView extends StatelessWidget {
       await audioPlayer.setReleaseMode(ReleaseMode.STOP);
     }
   }
-
   Widget _buildPronounciation(LexicalDefinition definition) {
     if (definition.pronunciationSpelling != null) {
       var widget = Row(
@@ -59,10 +56,11 @@ class CardDefinitionView extends StatelessWidget {
             style: TextStyle(color: Colors.black45),
           ),
           IconButton(
-            icon: Icon(
-              Icons.speaker_phone,
-              color: definition.pronunciationUrl != null ? Colors.black : Colors.black26,
-            ),
+            icon: Image.asset('graphics/audio.png'),
+//            Icon(
+//              Icons.speaker_phone,
+//              color: definition.pronunciationUrl != null ? Colors.black : Colors.black26,
+//            ),
             onPressed: () {
               _playUrl(definition.pronunciationUrl);
             },
@@ -138,14 +136,14 @@ class CardDefinitionView extends StatelessWidget {
           new Container(
             margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
             child: new Text(
-              word,
+              wordInfo.word,
               style: _bigFont,
             ),
           ),
           new Expanded(
             //margin: const EdgeInsets.only(left: 16.0, right: 16.0),
             child: FutureBuilder(
-              future: WordData.fetchDefinition(word),
+              future: WordData.fetchDefinition(wordInfo.word),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     WordDefinition wordDefinition = snapshot.data;

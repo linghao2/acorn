@@ -32,6 +32,13 @@ flutter:
      - graphics/iconDontKnow.png
      - graphics/iconGotIt.png
      - graphics/iconNotSure.png
+     - graphics/audio.png
+     - graphics/0.png
+     - graphics/1.png
+     - graphics/2.png
+     - graphics/3.png
+     - graphics/4.png
+     - graphics/5.png
 
 
   # To add assets to your application, add an assets section, like this:

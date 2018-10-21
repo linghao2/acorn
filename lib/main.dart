@@ -1,11 +1,12 @@
-import 'card-definition.dart';
 import 'dart:convert';
 import 'material_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
 import 'settings.dart';
 import 'test_view.dart';
-
+import 'card-definition.dart';
+import 'word_data.dart';
 
 void main() => runApp(new MyApp());
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Acorn',
       theme: new ThemeData(
         //buttonColor: new Color(0xFFFFF2B6),
-        primaryColor: new Color(0xFFFFF2B6),
+        primaryColor: Color(0xFFF4F4F4),
       ),
       home: new MyHomePage(title: 'Acorn'),
     );
@@ -34,42 +35,69 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<String>_words = ['anthelion', 'anthropology', 'long'];
+  List<WordInfo> _wordInfos = List<WordInfo>();
   List<String> _dictionaryValues = List<String>();
 
   final _formKey = new GlobalKey<FormState>();
-  Widget _buildList() {
+
+  void initState() {
+    super.initState();
+
+    _loadWords();
     _loadDictionary();
-    return ListView.builder(
-        padding: const EdgeInsets.all(0.0),
-        itemCount: _words.length,
-        itemBuilder: (context, i) {
-          return _buildRow(_words[i]);
-        });
   }
 
-  Widget _buildRow(String word) {
-    return ListTile(
+  Widget _buildList() {
+    var listView = ListView.builder(
+        itemCount: _wordInfos.length,
+        itemBuilder: (context, i) {
+          return _buildRow(_wordInfos[i]);
+        });
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xFFF4F4F4),
+      ),
+      child: listView,
+    );
+
+  }
+
+  Widget _buildRow(WordInfo wordInfo) {
+    print(wordInfo.score);
+    var word = wordInfo.word;
+    var score = wordInfo.score;
+
+    var listTile = ListTile(
       title: Text(
-        word,
+        wordInfo.word,
       ),
-      trailing: new Icon(
-        Icons.linear_scale,
-        color: new Color(0xFFFFB20A),
-      ),
+      trailing: Image.asset('graphics/${score}.png'),
       onTap: () {
-        _pushDefinition(word);
+        _pushDefinition(wordInfo);
       },
+    );
+
+    return Dismissible(
+      key: new Key(word),
+      onDismissed: (direction) {
+        _wordInfos.remove(wordInfo);
+      },
+      child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 4.0),
+          child: new Card(
+            child: listTile,
+          ),
+      ),
     );
   }
 
-  void _pushDefinition(String word) {
+  void _pushDefinition(WordInfo wordInfo) {
     Navigator.of(context).push(
       new MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return new Scaffold(
             appBar: new AppBar(
-              title: Text(word),
+              title: Text(wordInfo.word),
             ),
             body: new Column(
               mainAxisSize: MainAxisSize.min,
@@ -80,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Expanded(
                           child: Container(
                             padding: const EdgeInsets.all(16.0),
-                            child: new CardDefinitionView(word: word),
+                            child: new CardDefinitionView(wordInfo: wordInfo),
                           )
                       ),
                     ],
@@ -115,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Expanded(
                             child: Container(
                               padding: const EdgeInsets.all(16.0),
-                              child: new TestView(words: _words),
+                              child: new TestView(wordInfos: _wordInfos,),
                             )
                         ),
                       ],
@@ -173,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(widget.title),
+        //title: new Text(widget.title),
         leading: IconButton(
           icon: const Icon(Icons.dashboard),
           onPressed: _performTest,
@@ -232,11 +260,42 @@ class _MyHomePageState extends State<MyHomePage> {
         .push(_buildMaterialSearchPage(context))
         .then((dynamic value) {
       setState(() {
-        if (!_words.contains(value)) {
-          _words.add(value);
+        if (!_containsWord(value)) {
+          _wordInfos.add(WordInfo(
+            word: value,
+            score: 0,
+          ));
         }
       });
     });
+  }
+
+  bool _containsWord(String word) {
+    for (WordInfo wordInfo in _wordInfos) {
+      if (wordInfo.word == word) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  _loadWords() async {
+    _wordInfos.add(WordInfo(
+      word: 'anthelion',
+      score: 1,
+    ));
+    _wordInfos.add(WordInfo(
+      word: 'anthropology',
+      score: 2,
+    ));
+    _wordInfos.add(WordInfo(
+      word: 'long',
+      score: 3,
+    ));
+    _wordInfos.add(WordInfo(
+      word: 'short',
+      score: 4,
+    ));
   }
 
   _loadDictionary() async  {

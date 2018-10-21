@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'card-definition.dart';
+import 'word_data.dart';
 
 class FlashCard extends StatefulWidget {
-  FlashCard({ this.word, this.showFront = true, this.count = 0, this.totalCount = 0, this.onNext });
+  FlashCard({ this.wordInfo, this.showFront = true, this.count = 0, this.totalCount = 0, this.onNext });
 
   final _bigFont = const TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0);
 
-  final String word;
+  final WordInfo wordInfo;
   final bool showFront;
   final OnNext onNext;
   final int count;
@@ -90,7 +91,7 @@ class FlashCardState extends State<FlashCard> with TickerProviderStateMixin {
             Expanded(
               child: new Center(
                 child: Text(
-                  widget.word,
+                  widget.wordInfo.word,
                   style: widget._bigFont,
                 )   ,
               ),
@@ -110,7 +111,7 @@ class FlashCardState extends State<FlashCard> with TickerProviderStateMixin {
         _toggleShowFront();
       },
       child: CardDefinitionView(
-          word: widget.word,
+          wordInfo: widget.wordInfo,
           isFlashCard: true,
           onNext: (FeedbackScore score) => widget.onNext(score),
       ),

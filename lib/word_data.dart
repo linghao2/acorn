@@ -1,8 +1,29 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+
+
+enum FeedbackScore {Unspecified, Yes, No, Maybe}
+
+class WordInfo{
+  String word;
+  int score;
+
+  WordInfo({this.word, this.score});
+
+  void scoreFeedback(FeedbackScore feedbackScore) {
+    // TODO what to do about Maybe
+    if (feedbackScore == FeedbackScore.Yes) {
+      score = min(score+1, 5);
+    }
+    if (feedbackScore == FeedbackScore.No) {
+      score = max(score-1, 0);
+    }
+  }
+}
 
 class LexicalDefinition {
   String word;
