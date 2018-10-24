@@ -8,6 +8,8 @@ import 'test_view.dart';
 import 'card-definition.dart';
 import 'word_data.dart';
 
+const darkYellowColor = Color(0xFFB20A);
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -18,6 +20,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         //buttonColor: new Color(0xFFFFF2B6),
         primaryColor: Color(0xFFF4F4F4),
+        canvasColor: Color(0xFFF4F4F4),
       ),
       home: new MyHomePage(title: 'Acorn'),
     );
@@ -85,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Padding(
           padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 4.0),
           child: new Card(
+            elevation: 0.0,
             child: listTile,
           ),
       ),
@@ -97,7 +101,10 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context) {
           return new Scaffold(
             appBar: new AppBar(
-              title: Text(wordInfo.word),
+//              iconTheme: IconThemeData(
+//                color: Colors.purple, //change your color here
+//              ),
+              elevation: 0.0,
             ),
             body: new Column(
               mainAxisSize: MainAxisSize.min,
@@ -107,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       Expanded(
                           child: Container(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
                             child: new CardDefinitionView(wordInfo: wordInfo),
                           )
                       ),
@@ -115,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 new Container(
-                  padding: EdgeInsets.only(bottom: 32.0),
+                  padding: EdgeInsets.only(bottom: 16.0),
                 ),
               ],
             )
@@ -200,14 +207,55 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        //title: new Text(widget.title),
-        leading: IconButton(
-          icon: const Icon(Icons.dashboard),
-          onPressed: _performTest,
+      drawer: Drawer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFF57E191),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Image.asset('graphics/acorn.png'),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        'Learn words more efficiently with Acorn',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+
+                  ),
+                ],
+              )
+            ),
+            ListTile(
+              title: Text('Settings'),
+              leading: Icon(
+                Icons.settings,
+                color: Color(0xFFFFB20A),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _settings();
+              },
+            ),
+          ]
         ),
+      ),
+      appBar: new AppBar(
+        elevation: 0.0,
         actions: <Widget> [
-          new IconButton(icon: const Icon(Icons.settings), onPressed: _settings,)
+          //new IconButton(icon: const Icon(Icons.settings), onPressed: _settings,)
+          IconButton(
+            icon: Image.asset('graphics/cardsIcon.png'),
+            onPressed: _performTest,
+          ),
         ],
       ),
       body: _buildList(),
@@ -221,6 +269,8 @@ class _MyHomePageState extends State<MyHomePage> {
         )
     );
   }
+
+
   _buildMaterialSearchPage(BuildContext context) {
 
     return new MaterialPageRoute<String>(

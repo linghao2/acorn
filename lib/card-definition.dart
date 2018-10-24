@@ -57,10 +57,6 @@ class CardDefinitionView extends StatelessWidget {
           ),
           IconButton(
             icon: Image.asset('graphics/audio.png'),
-//            Icon(
-//              Icons.speaker_phone,
-//              color: definition.pronunciationUrl != null ? Colors.black : Colors.black26,
-//            ),
             onPressed: () {
               _playUrl(definition.pronunciationUrl);
             },
@@ -141,7 +137,6 @@ class CardDefinitionView extends StatelessWidget {
             ),
           ),
           new Expanded(
-            //margin: const EdgeInsets.only(left: 16.0, right: 16.0),
             child: FutureBuilder(
               future: WordData.fetchDefinition(wordInfo.word),
                 builder: (context, snapshot) {
