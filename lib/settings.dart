@@ -1,6 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:typed_data';
+
 
 class SettingsView extends StatelessWidget {
 
@@ -22,48 +26,53 @@ class MySettingsPage extends StatefulWidget {
 }
 
 class _MySettingsPageState extends State<MySettingsPage>{
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   bool _reminderValue = true;
   bool _visible = true;
-  int _wordCount = 4;
-  String _interval = null;
   String _language = null;
   String _motherTongue = null;
+  String _timePeriod = 'am';
+  TimeOfDay _time = new TimeOfDay(hour: 10, minute: 00);
 
-  List<int> _wordCountList = new List<int>();
-  List<String> _intervalList = new List<String>();
   List<String> _languageList = new List<String>();
   List<String> _motherTongueList = new List<String>();
+
 
   void _toggleOnChanged(bool value){
     setState(() {
       _reminderValue = value;
+      if(_reminderValue == true)
+        _showDailyNotificationAtTime(_time);
+      else
+        _cancelNotification();
       _visible = !_visible;
     });
   }
 
   @override
   void initState() {
-    _wordCountList.addAll([1,5,10,15]);
-    _wordCount = _wordCountList.elementAt(0);
-    _intervalList.addAll(['1 hour', '5 hours', '1 day', '5 days', '25 days']);
-    _interval = _intervalList.elementAt(0);
     _languageList.addAll(['Chinese','English', 'French']);
     _language = _languageList.elementAt(0);
     _motherTongueList.addAll(['Chinese','English', 'French']);
     _motherTongue = _motherTongueList.elementAt(0);
-
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var initializationSettingsAndroid =
+    new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        selectNotification: onSelectNotification);
+    if (_reminderValue == true) {
+      _showDailyNotificationAtTime(_time);
+    }
   }
 
-  void _wordCountOnChanged(int value){
-    setState((){
-      _wordCount = value;
-    });
-  }
-
-  void _intervalOnChanged(String intervalValue){
-    setState((){
-      _interval = intervalValue;
-    });
+  Future onSelectNotification(String payload) async{
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+      Navigator.pop(context);
+    }
   }
 
   void _languageOnChanged(String languageValue){
@@ -78,6 +87,82 @@ class _MySettingsPageState extends State<MySettingsPage>{
     });
   }
 
+  Future<Null> _selectTime(BuildContext context) async {
+    final TimeOfDay picked = await showTimePicker(
+        context: context,
+        initialTime: _time
+    );
+
+    if (picked != null && picked != _time) {
+      setState(() {
+        _time = picked;
+        _showDailyNotificationAtTime(_time);
+        if(_time.period.toString() == 'DayPeriod.am')
+          _timePeriod = 'am';
+        else
+          _timePeriod = 'pm';
+
+      });
+    }
+  }
+
+  Future _cancelNotification() async {
+    await flutterLocalNotificationsPlugin.cancel(0);
+  }
+
+  /// Schedules a notification that specifies a different icon, sound and vibration pattern
+  Future _scheduleNotification() async {
+    var scheduledNotificationDateTime =
+    new DateTime.now().add(new Duration(seconds: 5));
+    var vibrationPattern = new Int64List(4);
+    vibrationPattern[0] = 0;
+    vibrationPattern[1] = 1000;
+    vibrationPattern[2] = 5000;
+    vibrationPattern[3] = 2000;
+
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your other channel id',
+        'your other channel name',
+        'your other channel description',
+        icon: 'secondary_icon',
+        sound: 'slow_spring_board',
+        largeIcon: 'sample_large_icon',
+        largeIconBitmapSource: BitmapSource.Drawable,
+        vibrationPattern: vibrationPattern,
+        color: const Color.fromARGB(255, 255, 0, 0));
+    var iOSPlatformChannelSpecifics =
+    new IOSNotificationDetails(sound: "slow_spring_board.aiff");
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        0,
+        'scheduled title',
+        'scheduled body',
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
+  }
+
+  Future _showDailyNotificationAtTime(TimeOfDay ScheduledTime) async {
+    var time = new Time(ScheduledTime.hourOfPeriod, ScheduledTime.minute, 0);
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'repeatDailyAtTime channel id',
+        'repeatDailyAtTime channel name',
+        'repeatDailyAtTime description');
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showDailyAtTime(
+        0,
+        'Acorn',
+        "Hey! It's time for you to acorn! Good Luck!",
+        time,
+        platformChannelSpecifics);
+  }
+
+  String _toTwoDigitString(int value) {
+    return value.toString().padLeft(2, '0');
+  }
+
 
   Widget build(BuildContext context){
 
@@ -87,11 +172,14 @@ class _MySettingsPageState extends State<MySettingsPage>{
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text('Acorn Reminder',
-              style:new TextStyle(fontSize: 24.0)
+              style:new TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+              )
           ),
           new Switch(value: _reminderValue,
               activeColor: Colors.green,
-              onChanged: (bool value){_toggleOnChanged(value);}
+              onChanged: (bool value){_toggleOnChanged(value); }
           ),
         ],
       ),
@@ -104,81 +192,42 @@ class _MySettingsPageState extends State<MySettingsPage>{
           opacity:  _visible? 1.0 : 0.2,
           duration: Duration(milliseconds: 100),
           child:Wrap(
-          children: <Widget>[
-            new Container(
-              margin: const EdgeInsets.only(top: 10.0),
-              child: new Text('I will be accorning  ', style:new TextStyle (fontSize: 24.0)),
-            ),
-            DropdownButton(
-              value: _wordCount,
-              iconSize: 30.0,
-              items: _wordCountList.map((int value){
-                return DropdownMenuItem(
-                    value: value,
-                    child: new Text('${value}'));
-                }).toList(),
-              onChanged: (int value){_wordCountOnChanged(value);},
-            ),
-            new Container(
-              margin: const EdgeInsets.only(top: 10.0),
-              child: new Text(' words ', style:new TextStyle (fontSize: 24.0)),
-             ),
-            new Container(
-              margin: const EdgeInsets.only(top: 10.0),
-              child: new Text('every  ', style:new TextStyle (fontSize: 24.0)),
-            ),
-            new DropdownButton(
-              value: _interval == ""? null : _interval,
-              iconSize: 30.0,
-              items: _intervalList.map((String value){
-                return DropdownMenuItem(
-                    value: value,
-                    child: new Text('${value}'));
-              }).toList(),
-              onChanged: (String value){_intervalOnChanged(value);},
-            ),
-          ],
-        ),
-       )
-    );
-
-    Widget intervalInfo = Container(
-        padding: EdgeInsets.only(top: 20.0),
-        child: new RichText(
-            text: new TextSpan(
-                children: [
-                  new TextSpan(
-                    text: 'The interval set is based on ',
-                    style: new TextStyle(fontSize: 12.0, color: Colors.grey),
-                  ),
-                  new TextSpan(
-                    text: 'Pimsleurs graduated interval recall',
-                    style: new TextStyle(fontSize: 12.0, color: Colors.blue),
-                    recognizer: new TapGestureRecognizer() ..onTap = () {
-                      launch('https://en.wikipedia.org/wiki/Spaced_repetition');
-                    }
-                    ),
-                ]
-            )
+            children: <Widget>[
+              new Container(
+                margin: const EdgeInsets.only(top: 10.0),
+                child: new Text('I will be accorning at ', style:new TextStyle (fontSize: 24.0)),
+              ),
+              new RaisedButton(
+                child: new Text(
+                    _time != null ? '${_time.hourOfPeriod}' + ':'  + "${_time.minute > 10? _time.minute: '0'+_time.minute.toString()} ${_timePeriod}" : 'Select Time'),
+                color: Color(0xFFFFB20A),
+                onPressed: (){_selectTime(context);},
+              ),
+            ],
+          ),
         )
     );
 
     Widget languageTitle = new Container(
-      padding: EdgeInsets.only(top: 20.0),
+      padding: EdgeInsets.only(top: 80.0),
       child: Row(
         children: <Widget>[
           Text('Language ',
-              style: new TextStyle(fontSize: 24.0)),
+              style: new TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              )),
         ],
       ),
     );
 
     Widget learning = new Container(
       padding: EdgeInsets.only(top: 20.0),
-      child: Row(
-        children: <Widget>[
-          Text('I am learning ',
-            style: new TextStyle(fontSize: 24.0),
+      child:Wrap(
+          children: <Widget>[
+          new Container(
+            margin: const EdgeInsets.only(top: 10.0),
+            child: Text('I am learning   ', style: new TextStyle(fontSize: 24.0)),
           ),
           new DropdownButton(
             value: _language == ""? null : _language,
@@ -186,7 +235,8 @@ class _MySettingsPageState extends State<MySettingsPage>{
             items: _languageList.map((String value){
               return DropdownMenuItem(
                   value: value,
-                  child: new Text('${value}'));
+                  child: new Text('${value}', style:new TextStyle(fontSize: 24.0))
+              );
             }).toList(),
             onChanged: (String languageValue){_languageOnChanged(languageValue);},
           )
@@ -196,10 +246,11 @@ class _MySettingsPageState extends State<MySettingsPage>{
 
     Widget motherTongue = new Container(
       padding: EdgeInsets.only(top: 20.0),
-      child: Row(
+      child:Wrap(
         children: <Widget>[
-          Text('My Mother Tongue is ',
-            style: new TextStyle(fontSize:  24.0),
+          new Container(
+            margin: const EdgeInsets.only(top: 10.0),
+            child: Text('My mother tongue is ', style: new TextStyle(fontSize: 24.0)),
           ),
           new DropdownButton(
             value: _motherTongue == ""? null: _motherTongue,
@@ -207,7 +258,8 @@ class _MySettingsPageState extends State<MySettingsPage>{
             items: _motherTongueList.map((String value) {
               return DropdownMenuItem(
                   value: value,
-                  child: new Text('${value}'));
+                  child: new Text('${value}', style:new TextStyle(fontSize: 24.0))
+              );
             }).toList(),
             onChanged: (String motherTongueValue){_motherTongueOnChanged(motherTongueValue);},
           )
@@ -220,7 +272,6 @@ class _MySettingsPageState extends State<MySettingsPage>{
       children: <Widget>[
         reminderToggle,
         reminderFrequency,
-        intervalInfo,
         languageTitle,
         learning,
         motherTongue,
