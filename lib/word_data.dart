@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 
-enum FeedbackScore {Unspecified, Yes, No, Maybe}
+enum FeedbackScore {Unspecified, Yes, No}
 
 class WordInfo{
   String word;
@@ -39,6 +39,7 @@ class LexicalDefinition {
 class WordDefinition {
   String word;
   String json;
+  String translation;
   List<LexicalDefinition> entries;
 
   WordDefinition({this.word, this.entries });
@@ -117,20 +118,58 @@ class WordData {
   }
 
   static Future<WordDefinition> fetchDefinition(String word) async {
+    String translation = await fetchTranslation(word);
+    print(translation);
+
     bool exists = await responseExists(word);
     if (exists) {
       String response = await readResponse(word);
-      return WordDefinition.fromJson(word, response);
+      var wordDefinition = WordDefinition.fromJson(word, response);
+      wordDefinition.translation = translation;
+      return wordDefinition;
     }
     String url = WordData.getUrl(word);
     final response = await http.get(url, headers: WordData.getHeaders());
     if (response.statusCode == 200) {
       writeResponse(word, response.body);
-      return WordDefinition.fromJson(word, response.body);
+      var wordDefinition = WordDefinition.fromJson(word, response.body);
+      wordDefinition.translation = translation;
+      return wordDefinition;
     } else {
       var code = response.statusCode;
       throw Exception('Failed to load $word: $code');
     }
+  }
+
+  static Future<String> fetchTranslation(String word) async {
+    /*
+    // TODO to language
+    const String url = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=zh-Hans";
+    String body = '[{ \'text\' : \'$word\' }]';
+    print('body: $body');
+    final response = await http.post(
+      url,
+      headers: {
+        'Ocp-Apim-Subscription-Key' : '22943ebc6e4c48f88e468d12d9169641',
+        'Content-type' : 'application/json',
+        // TODO random UUID
+        'X-clientTraceId' : '6c84fb90-12c4-11e1-840d-7b25c5ee775a',
+      },
+      body: body,
+    );
+    print(response.body);
+    try {
+      const JsonDecoder decoder = const JsonDecoder();
+      List decoded = decoder.convert(response.body);
+      for (Map entry in decoded) {
+        Map one = entry['translations'][0];
+        return one['text'];
+      }
+    } catch (e) {
+      print('parse translate error $e');
+    }
+    */
+    return null;
   }
 
   static Future<String> get _localPath async {

@@ -76,25 +76,16 @@ class FlashCardState extends State<FlashCard> with TickerProviderStateMixin {
         _toggleShowFront();
       },
       child: new Card(
-        color: new Color(0xFFFFF2B6),
-        child: new Column(
+        color: Color(0xFFFFF2B6),
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(16.0),
+            Center(
               child: Text(
-                widget.totalCount == 0 ? '' : '${widget.count}/${widget.totalCount}',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
-              ),
-            ),
-            Expanded(
-              child: new Center(
-                child: Text(
-                  widget.wordInfo.word,
-                  style: widget._bigFont,
-                )   ,
-              ),
+                widget.wordInfo.word,
+                style: widget._bigFont,
+              )   ,
             ),
           ],
         ),

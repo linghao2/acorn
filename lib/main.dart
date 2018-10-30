@@ -140,6 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
           return new Scaffold(
               appBar: new AppBar(
                 title: Text('Test'),
+                elevation: 0.0,
               ),
               body: new Column(
                 mainAxisSize: MainAxisSize.max,
@@ -149,7 +150,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         Expanded(
                             child: Container(
-                              padding: const EdgeInsets.all(16.0),
                               child: new TestView(wordInfos: _wordInfos,),
                             )
                         ),

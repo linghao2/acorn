@@ -71,7 +71,7 @@ class CardDefinitionView extends StatelessWidget {
     return null;
   }
 
-  Widget _buildIconButton(String iconPath, String text, FeedbackScore score) {
+  Widget _buildIconButton(IconData icon, Color color, String text, FeedbackScore score) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -80,12 +80,15 @@ class CardDefinitionView extends StatelessWidget {
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
           color: Colors.white,
           child: MaterialButton(
-            minWidth: 60.0,
             child: Column(
               children: <Widget>[
                 Container(
                   padding: const EdgeInsets.only(bottom: 4.0),
-                  child: Image.asset(iconPath),
+                  //child: Image.asset(iconPath),
+                  child: Icon(
+                    icon,
+                    color: color,
+                  ),
                 ),
                 Text(
                   text,
@@ -109,11 +112,9 @@ class CardDefinitionView extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildIconButton('graphics/iconGotIt.png', 'Got it', FeedbackScore.Yes),
-          Container(width: 8.0),
-          _buildIconButton('graphics/iconNotSure.png', 'Not sure', FeedbackScore.Maybe),
-          Container(width: 8.0),
-          _buildIconButton('graphics/iconDontKnow.png', 'don\'t know', FeedbackScore.No),
+          _buildIconButton(Icons.check, Colors.green, 'Got it', FeedbackScore.Yes),
+          //Container(width: 8.0),
+          _buildIconButton(Icons.clear, Colors.red, 'Don\'t know', FeedbackScore.No),
         ],
       );
     }
@@ -153,7 +154,7 @@ class CardDefinitionView extends StatelessWidget {
 
                       // category
                       if (definition.category != null) {
-                        children.add(new Text(
+                        children.add(Text(
                             definition.category,
                             style: TextStyle(color: Colors.purple)
                         ));
@@ -163,6 +164,14 @@ class CardDefinitionView extends StatelessWidget {
                       }
 
                       children.addAll(_buildFlashCardDefinitions(definition.definitions));
+                    }
+
+                    if (wordDefinition.translation != null) {
+                      children.add(
+                        Text(
+                          wordDefinition.translation,
+                        ),
+                      );
                     }
 
                     return ListView.builder(
@@ -176,8 +185,11 @@ class CardDefinitionView extends StatelessWidget {
                     );
                   }
                   return Container(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: CircularProgressIndicator(),
+                    padding: EdgeInsets.all(16.0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: CircularProgressIndicator(),
+                    ),
                   );
                 }
             ),

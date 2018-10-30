@@ -14,12 +14,11 @@ class TestView extends StatelessWidget {
   Widget build(BuildContext context) {
     _buildContainers();
 
-    coverFlow = new CoverFlow(
+    coverFlow = CoverFlow(
       itemBuilder: cardBuilder,
       itemCount: wordInfos.length,
       dismissibleItems: false,
     );
-
     return coverFlow;
   }
 

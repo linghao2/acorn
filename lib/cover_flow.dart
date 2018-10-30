@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 /**
  * Copied from simple_coverflow 0.0.6 Added
@@ -44,9 +46,10 @@ class CoverFlow extends StatefulWidget {
 
   _CoverFlowState coverFlowState;
 
+  // height: 525, width: 700
   CoverFlow({@required this.itemBuilder, this.dismissibleItems: true,
-    this.dismissedCallback, this.viewportFraction: .85, this.height: 525,
-    this.width: 700, this.itemCount: null}) : assert(itemBuilder != null);
+    this.dismissedCallback, this.viewportFraction: .85, this.height: 850,
+    this.width: 1000, this.itemCount: null}) : assert(itemBuilder != null);
 
   @override
   _CoverFlowState createState() {
@@ -78,16 +81,36 @@ class _CoverFlowState extends State<CoverFlow> {
 
   @override
   Widget build(BuildContext context) {
-    return new PageView.builder(
-        onPageChanged: (value) {
-          setState(() {
-            _pageHasChanged = true;
-            currentPage = value;
-          });
-        },
-        controller: controller,
-        itemCount: widget.itemCount,
-        itemBuilder: (context, index) => builder(index));
+    var oneTenth = MediaQuery.of(context).size.width * 0.1;
+    print(((currentPage+1)/widget.itemCount) * 100);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(left: oneTenth, right: oneTenth, top: 8.0, bottom: 8.0),
+          child: LinearPercentIndicator(
+            width: MediaQuery.of(context).size.width * 0.7,
+            lineHeight: 8.0,
+            percent: (currentPage+1)/widget.itemCount,
+            progressColor: Color(0xFFFED33D),
+            leading: Text('${currentPage+1}/${widget.itemCount}'),
+          ),
+        ),
+        Expanded(
+          child: PageView.builder(
+              onPageChanged: (value) {
+                setState(() {
+                  _pageHasChanged = true;
+                  currentPage = value;
+                });
+              },
+              controller: controller,
+              itemCount: widget.itemCount,
+              itemBuilder: (context, index) => builder(index)),
+        ),
+      ],
+    );
   }
 
   Widget builder(int index) {
