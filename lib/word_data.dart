@@ -11,17 +11,22 @@ enum FeedbackScore {Unspecified, Yes, No}
 class WordInfo{
   String word;
   int score;
+  FeedbackScore currentFeedback;
 
   WordInfo({this.word, this.score});
 
   void scoreFeedback(FeedbackScore feedbackScore) {
-    // TODO what to do about Maybe
-    if (feedbackScore == FeedbackScore.Yes) {
+    currentFeedback = feedbackScore;
+  }
+
+  void recordFeedback() {
+    if (currentFeedback == FeedbackScore.Yes) {
       score = min(score+1, 5);
     }
-    if (feedbackScore == FeedbackScore.No) {
+    if (currentFeedback == FeedbackScore.No) {
       score = max(score-1, 0);
     }
+    currentFeedback = FeedbackScore.Unspecified;
   }
 }
 

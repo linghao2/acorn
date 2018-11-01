@@ -5,7 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'settings.dart';
 import 'test_view.dart';
-import 'card-definition.dart';
+import 'card_definition.dart';
 import 'word_data.dart';
 
 const darkYellowColor = Color(0xFFB20A);
@@ -22,7 +22,10 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xFFF4F4F4),
         canvasColor: Color(0xFFF4F4F4),
       ),
-      home: new MyHomePage(title: 'Acorn'),
+      initialRoute: '/',
+      routes: {
+        '/': (BuildContext context) => MyHomePage(title: 'Acorn'),
+      },
     );
   }
 }
@@ -101,9 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context) {
           return new Scaffold(
             appBar: new AppBar(
-//              iconTheme: IconThemeData(
-//                color: Colors.purple, //change your color here
-//              ),
               elevation: 0.0,
             ),
             body: new Column(
@@ -135,33 +135,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _performTest() {
     Navigator.of(context).push(
-      new MaterialPageRoute<void>(
+      MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          return new Scaffold(
-              appBar: new AppBar(
-                title: Text('Test'),
-                elevation: 0.0,
-              ),
-              body: new Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Expanded(
-                    child: new Row(
-                      children: [
-                        Expanded(
-                            child: Container(
-                              child: new TestView(wordInfos: _wordInfos,),
-                            )
-                        ),
-                      ],
-                    ),
-                  ),
-                  new Container(
-                    padding: EdgeInsets.only(bottom: 32.0),
-                  ),
-                ],
-              )
-          );
+          return TestView(wordInfos: _wordInfos,);
         },
       ),
     );
@@ -264,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _showMaterialSearch(context);
           },
           tooltip: 'Search',
-          backgroundColor: new Color(0xFFFFB20A),
+          backgroundColor: Color(0xFFFFB20A),
           child: new Icon(Icons.search),
         )
     );

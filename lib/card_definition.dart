@@ -112,9 +112,9 @@ class CardDefinitionView extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildIconButton(Icons.check, Colors.green, 'Got it', FeedbackScore.Yes),
+          _buildIconButton(Icons.check, Colors.green[400], 'Got it', FeedbackScore.Yes),
           //Container(width: 8.0),
-          _buildIconButton(Icons.clear, Colors.red, 'Don\'t know', FeedbackScore.No),
+          _buildIconButton(Icons.clear, Colors.red[400], 'Don\'t know', FeedbackScore.No),
         ],
       );
     }

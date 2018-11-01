@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'card-definition.dart';
+import 'card_definition.dart';
 import 'word_data.dart';
 
 class FlashCard extends StatefulWidget {
