@@ -151,7 +151,8 @@ class _MyHomePageState extends State<MyHomePage> {
             appBar: new AppBar(
               title: Text('Settings'),
               leading: IconButton(
-                  icon: const Icon(Icons.settings),
+                  icon: const Icon(Icons.settings,
+                    color: Color(0xFFFFB20A)),
                   onPressed: null),
               actions: <Widget> [
                 new IconButton(
