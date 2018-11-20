@@ -13,7 +13,7 @@ class CardDefinitionView extends StatelessWidget {
   final OnNext onNext;
 
   List<Widget> _buildFlashCardDefinitions(List definitions) {
-    List<Widget> children = new List<Widget>();
+    List<Widget> children = List<Widget>();
     for (int i = 0; i < definitions.length; i++) {
       children.add(Row(
         children: <Widget>[
@@ -78,8 +78,9 @@ class CardDefinitionView extends StatelessWidget {
       children: <Widget>[
         Container(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-          color: Colors.white,
           child: MaterialButton(
+            color: Colors.white,
+            splashColor: color,
             child: Column(
               children: <Widget>[
                 Container(

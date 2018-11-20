@@ -41,7 +41,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<WordInfo> _wordInfos = List<WordInfo>();
+  List<WordInfo> _wordInfos;
   List<String> _dictionaryValues = List<String>();
 
   final _formKey = new GlobalKey<FormState>();
@@ -49,27 +49,46 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    _loadWords();
     _loadDictionary();
   }
 
   Widget _buildList() {
-    var listView = ListView.builder(
-        itemCount: _wordInfos.length,
-        itemBuilder: (context, i) {
-          return _buildRow(_wordInfos[i]);
-        });
-    return Container(
-      decoration: BoxDecoration(
-        color: Color(0xFFF4F4F4),
-      ),
-      child: listView,
-    );
+    return FutureBuilder<List>(
+      future: DbHelper().getWordInfos(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          _wordInfos = snapshot.data;
+          if (_wordInfos.length == 0) {
+            return Text('TODO show initial screen');
+          } else {
+            var listView = ListView.builder(
+                itemCount: _wordInfos.length,
+                itemBuilder: (context, i) {
+                  return _buildRow(_wordInfos[i]);
+                });
+            return Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFF4F4F4),
+              ),
+              child: listView,
+            );
 
+          }
+        } else {
+          return Container(
+            padding: EdgeInsets.all(16.0),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
+    );
   }
 
   Widget _buildRow(WordInfo wordInfo) {
-    print(wordInfo.score);
+    print('word: ${wordInfo.word} score: ${wordInfo.score}');
     var word = wordInfo.word;
     var score = wordInfo.score;
 
@@ -86,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Dismissible(
       key: new Key(word),
       onDismissed: (direction) {
+        DbHelper().remove(wordInfo);
         _wordInfos.remove(wordInfo);
       },
       child: Padding(
@@ -190,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Color(0xFF57E191),
+                color: Color(0xFFFFFAE2),
               ),
               child: Column(
                 children: <Widget>[
@@ -273,7 +293,9 @@ class _MyHomePageState extends State<MyHomePage> {
               limit: 20,
              // onSelect: (dynamic value) => Navigator.of(context).pop(value),
               onSelect: (dynamic value) {
-                _pushDefinition(value);
+                if (value is WordInfo) {
+                  _pushDefinition(value);
+                }
               },
               onSubmit: (String value) => Navigator.of(context).pop(value),
             ),
@@ -288,10 +310,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .then((dynamic value) {
       setState(() {
         if (!_containsWord(value)) {
-          _wordInfos.add(WordInfo(
-            word: value,
-            score: 0,
-          ));
+          _addWord(value);
         }
       });
     });
@@ -306,23 +325,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return false;
   }
 
-  _loadWords() async {
-    _wordInfos.add(WordInfo(
-      word: 'anthelion',
-      score: 1,
-    ));
-    _wordInfos.add(WordInfo(
-      word: 'anthropology',
-      score: 2,
-    ));
-    _wordInfos.add(WordInfo(
-      word: 'long',
-      score: 3,
-    ));
-    _wordInfos.add(WordInfo(
-      word: 'short',
-      score: 4,
-    ));
+  _addWord(String word) async {
+    var wordInfo = WordInfo(
+      word: word,
+      score: 0,
+    );
+
+    await DbHelper().insert(wordInfo);
+
+    _wordInfos.add(wordInfo);
   }
 
   _loadDictionary() async  {

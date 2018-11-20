@@ -13,6 +13,8 @@ dependencies:
   url_launcher: ^3.0.0
   percent_indicator: ^1.0.9
   flutter_local_notifications:
+  shared_preferences: ^0.4.3
+  sqflite: any
 
 dev_dependencies:
   flutter_test:

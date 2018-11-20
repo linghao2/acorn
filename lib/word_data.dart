@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:synchronized/synchronized.dart';
+import 'package:sqflite/sqflite.dart';
 
 
 enum FeedbackScore {Unspecified, Yes, No}
@@ -14,6 +16,22 @@ class WordInfo{
   FeedbackScore currentFeedback;
 
   WordInfo({this.word, this.score});
+
+  WordInfo.fromMap(Map<String, dynamic> map) {
+    word = map['word'];
+    score = map['score'];
+    var dt = DateTime.fromMillisecondsSinceEpoch(map['date']);
+    print('Datetime: $dt');
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic> {
+      "word" : word,
+      "score" : score,
+      "date" : DateTime.now().millisecondsSinceEpoch,
+    };
+    return map;
+  }
 
   void scoreFeedback(FeedbackScore feedbackScore) {
     currentFeedback = feedbackScore;
@@ -27,6 +45,62 @@ class WordInfo{
       score = max(score-1, 0);
     }
     currentFeedback = FeedbackScore.Unspecified;
+  }
+}
+
+
+class DbHelper {
+  static final DbHelper _singleton = DbHelper._internal();
+
+  factory DbHelper() {
+    return _singleton;
+  }
+
+  DbHelper._internal();
+
+  static Database _db;
+  static String path = "acorn.db";
+  static final _lock = Lock();
+
+  void remove(WordInfo wordInfo) async {
+    var db = await getDb();
+    var word = wordInfo.word;
+    var count = await db.rawDelete('DELETE FROM Words WHERE word = ?', [word]);
+    assert(count == 1);
+  }
+
+  void insert(WordInfo wordInfo) async {
+    var db = await getDb();
+    db.insert("Words", wordInfo.toMap());
+  }
+
+  Future<List<WordInfo>> getWordInfos() async {
+    var _wordInfos = List<WordInfo>();
+
+    var db = await getDb();
+    var results = await db.query("words", columns: ["word", "score", "date"], orderBy: "score");
+    for (Map<String, dynamic> map in results) {
+      _wordInfos.add(WordInfo.fromMap(map));
+    }
+    print(_wordInfos);
+    return _wordInfos;
+  }
+
+  Future<Database> getDb() async {
+    if (_db == null) {
+      await _lock.synchronized(() async {
+        // Check again once entering the synchronized block
+        if (_db == null) {
+          _db = await openDatabase(path, version: 1,
+            onCreate: (Database db, int version) async {
+              await db.execute("CREATE TABLE Words (word TEXT PRIMARY KEY, score INTEGER, date INTEGER, definition TEXT)");
+              await db.execute("CREATE TABLE Translations(word TEXT PRIMARY KEY, lang TEXT, translated TEXT)");
+            },
+          );
+        }
+      });
+    }
+    return _db;
   }
 }
 
@@ -127,6 +201,7 @@ class WordData {
     print(translation);
 
     bool exists = await responseExists(word);
+    print('exists? $exists');
     if (exists) {
       String response = await readResponse(word);
       var wordDefinition = WordDefinition.fromJson(word, response);
@@ -147,9 +222,9 @@ class WordData {
   }
 
   static Future<String> fetchTranslation(String word) async {
-    /*
     // TODO to language
-    const String url = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=zh-Hans";
+    /*
+    const String url = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=ja";
     String body = '[{ \'text\' : \'$word\' }]';
     print('body: $body');
     final response = await http.post(
@@ -199,6 +274,7 @@ class WordData {
   static Future<bool> responseExists(String word) async {
     final path = await _localPath;
     File wordFile = File('$path/$word.txt');
+    print('word file: $wordFile');
 
     return wordFile.exists();
   }
