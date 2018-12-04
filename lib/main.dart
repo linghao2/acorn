@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'material_search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show rootBundle ;
 
 import 'settings.dart';
 import 'test_view.dart';
-import 'card_definition.dart';
 import 'word_data.dart';
+import 'word_list.dart';
 
 const darkYellowColor = Color(0xFFB20A);
 
@@ -41,7 +41,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<WordInfo> _wordInfos;
   List<String> _dictionaryValues = List<String>();
 
   final _formKey = new GlobalKey<FormState>();
@@ -52,115 +51,21 @@ class _MyHomePageState extends State<MyHomePage> {
     _loadDictionary();
   }
 
-  Widget _buildList() {
-    return FutureBuilder<List>(
-      future: DbHelper().getWordInfos(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          _wordInfos = snapshot.data;
-          if (_wordInfos.length == 0) {
-            return Text('TODO show initial screen');
-          } else {
-            var listView = ListView.builder(
-                itemCount: _wordInfos.length,
-                itemBuilder: (context, i) {
-                  return _buildRow(_wordInfos[i]);
-                });
-            return Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFF4F4F4),
-              ),
-              child: listView,
-            );
+  void _performTest() async {
+    List<WordInfo> testWords = await DbHelper().selectWordsToTest(4);
 
-          }
-        } else {
-          return Container(
-            padding: EdgeInsets.all(16.0),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _buildRow(WordInfo wordInfo) {
-    print('word: ${wordInfo.word} score: ${wordInfo.score}');
-    var word = wordInfo.word;
-    var score = wordInfo.score;
-
-    var listTile = ListTile(
-      title: Text(
-        wordInfo.word,
-      ),
-      trailing: Image.asset('graphics/${score}.png'),
-      onTap: () {
-        _pushDefinition(wordInfo);
-      },
-    );
-
-    return Dismissible(
-      key: new Key(word),
-      onDismissed: (direction) {
-        DbHelper().remove(wordInfo);
-        _wordInfos.remove(wordInfo);
-      },
-      child: Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 4.0),
-          child: new Card(
-            elevation: 0.0,
-            child: listTile,
-          ),
-      ),
-    );
-  }
-
-  void _pushDefinition(WordInfo wordInfo) {
-    Navigator.of(context).push(
-      new MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return new Scaffold(
-            appBar: new AppBar(
-              elevation: 0.0,
-            ),
-            body: new Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Expanded(
-                  child: new Row(
-                    children: [
-                      Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-                            child: new CardDefinitionView(wordInfo: wordInfo),
-                          )
-                      ),
-                    ],
-                  ),
-                ),
-                new Container(
-                  padding: EdgeInsets.only(bottom: 16.0),
-                ),
-              ],
-            )
-          );
-        },
-      ),
-    );
-
-  }
-
-  void _performTest() {
-    Navigator.of(context).push(
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          return TestView(wordInfos: _wordInfos,);
+          return TestView(wordInfos: testWords,);
         },
       ),
     );
+
+    // record feedback
+    for (WordInfo info in testWords) {
+      info.recordFeedback();
+    }
   }
 
   void _settings() {
@@ -242,20 +147,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 _settings();
               },
             ),
+            ListTile(
+              title: Text('Debug'),
+              leading: Icon(
+                Icons.bug_report,
+                color: Color(0xFFFFB20A),
+              ),
+              onTap: () {
+                DbHelper().dumpTables();
+              },
+            ),
           ]
         ),
       ),
       appBar: new AppBar(
         elevation: 0.0,
         actions: <Widget> [
-          //new IconButton(icon: const Icon(Icons.settings), onPressed: _settings,)
           IconButton(
             icon: Image.asset('graphics/cardsIcon.png'),
             onPressed: _performTest,
           ),
         ],
       ),
-      body: _buildList(),
+      body: WordList(),
         floatingActionButton: new FloatingActionButton(
           onPressed: () {
             _showMaterialSearch(context);
@@ -294,7 +208,8 @@ class _MyHomePageState extends State<MyHomePage> {
              // onSelect: (dynamic value) => Navigator.of(context).pop(value),
               onSelect: (dynamic value) {
                 if (value is WordInfo) {
-                  _pushDefinition(value);
+                  // TODO push definition
+                  //_pushDefinition(value);
                 }
               },
               onSubmit: (String value) => Navigator.of(context).pop(value),
@@ -309,31 +224,21 @@ class _MyHomePageState extends State<MyHomePage> {
         .push(_buildMaterialSearchPage(context))
         .then((dynamic value) {
       setState(() {
-        if (!_containsWord(value)) {
-          _addWord(value);
-        }
+        _addWord(value);
       });
     });
   }
 
-  bool _containsWord(String word) {
-    for (WordInfo wordInfo in _wordInfos) {
-      if (wordInfo.word == word) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   _addWord(String word) async {
-    var wordInfo = WordInfo(
-      word: word,
-      score: 0,
-    );
+    bool containsWord = await DbHelper().containsWord(word);
+    if (!containsWord) {
+      var wordInfo = WordInfo(
+        word: word,
+        score: 0,
+      );
 
-    await DbHelper().insert(wordInfo);
-
-    _wordInfos.add(wordInfo);
+      await DbHelper().insert(wordInfo);
+    }
   }
 
   _loadDictionary() async  {

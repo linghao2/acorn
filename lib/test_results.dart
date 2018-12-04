@@ -22,7 +22,6 @@ class TestResults extends StatelessWidget {
       } else if (info.currentFeedback == FeedbackScore.No) {
         no += 1;
       }
-      info.recordFeedback();
     }
     return Scaffold(
         appBar: new AppBar(

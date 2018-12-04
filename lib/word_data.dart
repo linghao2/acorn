@@ -10,44 +10,39 @@ import 'package:sqflite/sqflite.dart';
 
 enum FeedbackScore {Unspecified, Yes, No}
 
-class WordInfo{
-  String word;
-  int score;
-  FeedbackScore currentFeedback;
+enum OrderBy {AtoZ, Date, Score}
 
-  WordInfo({this.word, this.score});
+class TranslateHelper {
 
-  WordInfo.fromMap(Map<String, dynamic> map) {
-    word = map['word'];
-    score = map['score'];
-    var dt = DateTime.fromMillisecondsSinceEpoch(map['date']);
-    print('Datetime: $dt');
-  }
-
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic> {
-      "word" : word,
-      "score" : score,
-      "date" : DateTime.now().millisecondsSinceEpoch,
-    };
-    return map;
-  }
-
-  void scoreFeedback(FeedbackScore feedbackScore) {
-    currentFeedback = feedbackScore;
-  }
-
-  void recordFeedback() {
-    if (currentFeedback == FeedbackScore.Yes) {
-      score = min(score+1, 5);
+  static Future<String> fetchTranslation(String word, String lang) async {
+    String url = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=${lang}";
+    String body = '[{ \'text\' : \'$word\' }]';
+    print('body: $body');
+    final response = await http.post(
+      url,
+      headers: {
+        'Ocp-Apim-Subscription-Key' : '22943ebc6e4c48f88e468d12d9169641',
+        'Content-type' : 'application/json',
+        // TODO random UUID
+        'X-clientTraceId' : '6c84fb90-12c4-11e1-840d-7b25c5ee775a',
+      },
+      body: body,
+    );
+    print(response.body);
+    try {
+      const JsonDecoder decoder = const JsonDecoder();
+      List decoded = decoder.convert(response.body);
+      for (Map entry in decoded) {
+        Map one = entry['translations'][0];
+        return one['text'];
+      }
+    } catch (e) {
+      print('parse translate error $e');
     }
-    if (currentFeedback == FeedbackScore.No) {
-      score = max(score-1, 0);
-    }
-    currentFeedback = FeedbackScore.Unspecified;
+    return null;
   }
+
 }
-
 
 class DbHelper {
   static final DbHelper _singleton = DbHelper._internal();
@@ -74,17 +69,43 @@ class DbHelper {
     db.insert("Words", wordInfo.toMap());
   }
 
-  Future<List<WordInfo>> getWordInfos() async {
+  String getOrderByString(OrderBy orderBy) {
+    switch (orderBy) {
+      case OrderBy.AtoZ:
+        return 'word';
+      case OrderBy.Date:
+        return 'date DESC';
+      case OrderBy.Score:
+        return 'score, word';
+    }
+  }
+
+  Future<List<WordInfo>> getWordInfos(OrderBy orderBy) async {
     var _wordInfos = List<WordInfo>();
 
     var db = await getDb();
-    var results = await db.query("words", columns: ["word", "score", "date"], orderBy: "score");
+    var results = await db.query("words", columns: ["word", "score", "date"], orderBy: getOrderByString(orderBy));
     for (Map<String, dynamic> map in results) {
       _wordInfos.add(WordInfo.fromMap(map));
     }
-    print(_wordInfos);
+    print('getWordInfos count: ${_wordInfos.length}');
     return _wordInfos;
   }
+
+  Future<List<WordInfo>> selectWordsToTest(int count) async {
+    var _wordInfos = List<WordInfo>();
+
+    var db = await getDb();
+    var results = await db.rawQuery('SELECT word, date, score FROM Words ORDER BY score LIMIT ?', [count]);
+    for (Map<String, dynamic> map in results) {
+      _wordInfos.add(WordInfo.fromMap(map));
+    }
+    print('getWordInfos count: ${_wordInfos.length}');
+    return _wordInfos;
+  }
+
+
+
 
   Future<Database> getDb() async {
     if (_db == null) {
@@ -93,8 +114,8 @@ class DbHelper {
         if (_db == null) {
           _db = await openDatabase(path, version: 1,
             onCreate: (Database db, int version) async {
-              await db.execute("CREATE TABLE Words (word TEXT PRIMARY KEY, score INTEGER, date INTEGER, definition TEXT)");
-              await db.execute("CREATE TABLE Translations(word TEXT PRIMARY KEY, lang TEXT, translated TEXT)");
+              await db.execute("CREATE TABLE Words (word TEXT PRIMARY KEY, score INTEGER, date INTEGER, testDate INTEGER, definition TEXT)");
+              await db.execute("CREATE TABLE Translations(word TEXT, lang TEXT, translated TEXT, PRIMARY KEY (word, lang))");
             },
           );
         }
@@ -102,7 +123,149 @@ class DbHelper {
     }
     return _db;
   }
+
+  Future<bool> containsWord(String word) async {
+    var db = await getDb();
+    List<Map> list = await db.rawQuery('SELECT word from Words WHERE word = ?', [word]);
+    if (list.length == 1) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<WordDefinition> getDefinition(String word) async {
+    var db = await getDb();
+    List<Map> list = await db.rawQuery('SELECT definition from Words WHERE word = ?', [word]);
+    var definition = null;
+    if (list.length == 1) {
+      definition = list[0]['definition'];
+      if (definition == null) {
+        String url = WordData.getUrl(word);
+        final response = await http.get(url, headers: WordData.getHeaders());
+        if (response.statusCode == 200) {
+          definition = response.body;
+          int count = await db.rawUpdate('UPDATE Words SET definition = ? WHERE word = ?', [definition, word]);
+          print('sql update count: $count');
+        } else {
+          var code = response.statusCode;
+          throw Exception('Failed to load $word: $code');
+        }
+      }
+    }
+    if (definition != null) {
+      var wordDefinition = WordDefinition.fromJson(word, definition);
+      print('definition found for ${word}');
+      return wordDefinition;
+    } else {
+      print('NO definition for ${word}');
+      return null;
+    }
+  }
+
+  Future<String> getTranslated(String word, String lang) async {
+    var db = await getDb();
+    List<Map> list = await db.rawQuery('SELECT translated from Translations WHERE word = ? and lang = ?', [word, lang]);
+    var translated = null;
+    if (list.length == 1) {
+      translated = list[0]['translated'];
+    } else {
+      translated = await TranslateHelper.fetchTranslation(word, lang);
+      var map = <String, dynamic> {
+        "word" : word,
+        "translated" : translated,
+        "lang" : lang,
+      };
+      var inserted = await db.insert("Translations", map);
+      print('translation inserted $inserted');
+    }
+    if (translated != null) {
+      print('translation found for ${word}');
+      return translated;
+    } else {
+      print('NO translation for ${word}');
+      return null;
+    }
+  }
+
+  void updateScore(String word, int score) async {
+    var db = await getDb();
+    int now = DateTime.now().millisecondsSinceEpoch;
+    int count = await db.rawUpdate('UPDATE Words SET score = ?, testDate = ? WHERE word = ?', [score, now, word]);
+    print('sql update score count: $count');
+  }
+
+  void dumpTables() async {
+    var db = await getDb();
+    var results = await db.rawQuery('SELECT * from Words');
+    print('Words table');
+    print('word   score   date   definition');
+    for (Map<String, dynamic> map in results) {
+      var word = map['word'];
+      var score = map['score'];
+      var dt = DateTime.fromMillisecondsSinceEpoch(map['date']);
+      var testDate = DateTime.fromMillisecondsSinceEpoch(map['testDate']);
+      var definition = map['definition'];
+      var short = definition == null ? 'no definition' : 'definition exists';
+      print('$word $score $dt $short');
+    }
+
+    var translations = await db.rawQuery('SELECT * from Translations');
+    print('Translations table');
+    print('word   lang   translated');
+    for (Map<String, dynamic> map in translations) {
+      var word = map['word'];
+      var lang = map['lang'];
+      var translated = map['translated'];
+      print('$word $lang $translated');
+    }
+
+  }
 }
+
+class WordInfo {
+  String word;
+  int score;
+  FeedbackScore currentFeedback;
+
+  WordInfo({this.word, this.score});
+
+  WordInfo.fromMap(Map<String, dynamic> map) {
+    word = map['word'];
+    score = map['score'];
+    var dt = DateTime.fromMillisecondsSinceEpoch(map['date']);
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic> {
+      "word" : word,
+      "score" : score,
+      "date" : DateTime.now().millisecondsSinceEpoch,
+    };
+    return map;
+  }
+
+  void scoreFeedback(FeedbackScore feedbackScore) {
+    currentFeedback = feedbackScore;
+  }
+
+  void recordFeedback() {
+    bool update = false;
+    if (currentFeedback == FeedbackScore.Yes) {
+      score = min(score+1, 5);
+      update = true;
+    }
+    if (currentFeedback == FeedbackScore.No) {
+      score = max(score-1, 0);
+      update = true;
+    }
+    currentFeedback = FeedbackScore.Unspecified;
+
+    if (update) {
+      DbHelper().updateScore(word, score);
+    }
+  }
+}
+
 
 class LexicalDefinition {
   String word;
@@ -197,6 +360,18 @@ class WordData {
   }
 
   static Future<WordDefinition> fetchDefinition(String word) async {
+    // TODO update Azure
+    //String translation = await fetchTranslation(word);
+    //print(translation);
+
+    print('fetchDefinition for $word');
+    WordDefinition definition = await DbHelper().getDefinition(word);
+    definition.translation = await DbHelper().getTranslated(word, 'zh-Hans');
+    return definition;
+  }
+
+  /*
+  static Future<WordDefinition> fetchDefinitionFromFile(String word) async {
     String translation = await fetchTranslation(word);
     print(translation);
 
@@ -220,38 +395,9 @@ class WordData {
       throw Exception('Failed to load $word: $code');
     }
   }
+  */
 
-  static Future<String> fetchTranslation(String word) async {
-    // TODO to language
-    /*
-    const String url = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=ja";
-    String body = '[{ \'text\' : \'$word\' }]';
-    print('body: $body');
-    final response = await http.post(
-      url,
-      headers: {
-        'Ocp-Apim-Subscription-Key' : '22943ebc6e4c48f88e468d12d9169641',
-        'Content-type' : 'application/json',
-        // TODO random UUID
-        'X-clientTraceId' : '6c84fb90-12c4-11e1-840d-7b25c5ee775a',
-      },
-      body: body,
-    );
-    print(response.body);
-    try {
-      const JsonDecoder decoder = const JsonDecoder();
-      List decoded = decoder.convert(response.body);
-      for (Map entry in decoded) {
-        Map one = entry['translations'][0];
-        return one['text'];
-      }
-    } catch (e) {
-      print('parse translate error $e');
-    }
-    */
-    return null;
-  }
-
+  /*
   static Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
@@ -278,4 +424,5 @@ class WordData {
 
     return wordFile.exists();
   }
+  */
 }
