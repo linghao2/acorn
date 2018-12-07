@@ -1,7 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:typed_data';
 import 'globals.dart';
@@ -54,7 +52,7 @@ class _MySettingsPageState extends State<MySettingsPage>{
   void initState() {
     _languageList.addAll(['Chinese','English', 'French']);
     _language = _languageList.elementAt(0);
-    _motherTongueList.addAll(Globals.supportedTranslation.keys);
+    _motherTongueList.addAll(Globals.supportedTranslation.values);
     _motherTongue = _motherTongueList.elementAt(0);
     flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     var initializationSettingsAndroid =

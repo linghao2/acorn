@@ -35,6 +35,7 @@ flutter:
      - dictionary.txt
      - graphics/audio.png
      - graphics/cardsIcon.png
+     - graphics/cardsNotificationIcon.png
      - graphics/squirrel.png
      - graphics/acorn.png
      - graphics/0.png

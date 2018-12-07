@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -148,18 +146,15 @@ class DbHelper {
           print('sql update count: $count');
         } else {
           var code = response.statusCode;
-          throw Exception('Failed to load $word: $code');
+          print('failed to find definition code: $code');
+          //throw Exception('Failed to load $word: $code');
         }
       }
     }
-    if (definition != null) {
-      var wordDefinition = WordDefinition.fromJson(word, definition);
-      print('definition found for ${word}');
-      return wordDefinition;
-    } else {
-      print('NO definition for ${word}');
-      return null;
-    }
+
+    var wordDefinition = WordDefinition.fromJson(word, definition);
+    print('definition found for ${word}');
+    return wordDefinition;
   }
 
   Future<String> getTranslated(String word, String lang) async {
@@ -198,15 +193,18 @@ class DbHelper {
     var db = await getDb();
     var results = await db.rawQuery('SELECT * from Words');
     print('Words table');
-    print('word   score   date   definition');
+    print('word   score   date  testDate  definition');
     for (Map<String, dynamic> map in results) {
       var word = map['word'];
       var score = map['score'];
       var dt = DateTime.fromMillisecondsSinceEpoch(map['date']);
-      var testDate = DateTime.fromMillisecondsSinceEpoch(map['testDate']);
+      var testDate = 'no test date';
+      if (map['testDate'] != null) {
+        testDate = DateTime.fromMillisecondsSinceEpoch(map['testDate']).toString();
+      }
       var definition = map['definition'];
       var short = definition == null ? 'no definition' : 'definition exists';
-      print('$word $score $dt $short');
+      print('$word $score $dt $testDate $short');
     }
 
     var translations = await db.rawQuery('SELECT * from Translations');
@@ -287,6 +285,13 @@ class WordDefinition {
   WordDefinition({this.word, this.entries });
 
   factory WordDefinition.fromJson(String word, String json) {
+    if (json == null) {
+      return WordDefinition(
+        word: word,
+        entries: null,
+      );
+    }
+
     const JsonDecoder decoder = const JsonDecoder();
     Map decoded = decoder.convert(json);
     List<LexicalDefinition> entries = List<LexicalDefinition>();
@@ -360,69 +365,10 @@ class WordData {
   }
 
   static Future<WordDefinition> fetchDefinition(String word) async {
-    // TODO update Azure
-    //String translation = await fetchTranslation(word);
-    //print(translation);
-
     print('fetchDefinition for $word');
     WordDefinition definition = await DbHelper().getDefinition(word);
     definition.translation = await DbHelper().getTranslated(word, 'zh-Hans');
     return definition;
   }
 
-  /*
-  static Future<WordDefinition> fetchDefinitionFromFile(String word) async {
-    String translation = await fetchTranslation(word);
-    print(translation);
-
-    bool exists = await responseExists(word);
-    print('exists? $exists');
-    if (exists) {
-      String response = await readResponse(word);
-      var wordDefinition = WordDefinition.fromJson(word, response);
-      wordDefinition.translation = translation;
-      return wordDefinition;
-    }
-    String url = WordData.getUrl(word);
-    final response = await http.get(url, headers: WordData.getHeaders());
-    if (response.statusCode == 200) {
-      writeResponse(word, response.body);
-      var wordDefinition = WordDefinition.fromJson(word, response.body);
-      wordDefinition.translation = translation;
-      return wordDefinition;
-    } else {
-      var code = response.statusCode;
-      throw Exception('Failed to load $word: $code');
-    }
-  }
-  */
-
-  /*
-  static Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  static void writeResponse(String word, String response) async {
-    final path = await _localPath;
-    File wordFile = File('$path/$word.txt');
-    wordFile.writeAsString(response);
-  }
-
-  static Future<String> readResponse(String word) async {
-    final path = await _localPath;
-    File wordFile = File('$path/$word.txt');
-
-    String response = await wordFile.readAsString();
-    return response;
-  }
-
-  static Future<bool> responseExists(String word) async {
-    final path = await _localPath;
-    File wordFile = File('$path/$word.txt');
-    print('word file: $wordFile');
-
-    return wordFile.exists();
-  }
-  */
 }

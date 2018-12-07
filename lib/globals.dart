@@ -9,17 +9,17 @@ class Globals {
   static Color background = Color(0xFFF4F4F4);
 
   static var supportedTranslation = {
-    'Chinese Simplified':'zh-Hans',
-    'Chinese Traditional':'zh-Hant',
-    'Spanish':'es',
-    'French':'fr',
-    'Hindi':'hi',
-    'Japanese':'ja',
-    'Portuguese':'pt',
-    'Arabic':'ar',
-    'Bangla':'bn',
-    'Russian':'ru',
-    'German':'de',
-    'Vietnamese':'vi',
+    'zh-Hans': 'Chinese Simplified',
+    'zh-Hant': 'Chinese Traditional',
+    'es':'Spanish',
+    'fr': 'French',
+    'hi': 'Hindi',
+    'ja': 'Japanese',
+    'pt': 'Portuguese',
+    'ar': 'Arabic',
+    'bn': 'Bangla',
+    'ru': 'Russian',
+    'de': 'German',
+    'vi': 'Vietnamese',
   };
 }

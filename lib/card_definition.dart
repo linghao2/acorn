@@ -146,31 +146,41 @@ class CardDefinitionView extends StatelessWidget {
                     WordDefinition wordDefinition = snapshot.data;
                     List<Widget> children = new List<Widget>();
 
-                    for (LexicalDefinition definition in wordDefinition.entries) {
-                      // pronunciation
-                      var pronounciationWidget = _buildPronounciation(definition);
-                      if (pronounciationWidget != null) {
-                        children.add(pronounciationWidget);
+                    if (wordDefinition.entries != null) {
+                      for (LexicalDefinition definition in wordDefinition.entries) {
+                        // pronunciation
+                        var pronounciationWidget = _buildPronounciation(definition);
+                        if (pronounciationWidget != null) {
+                          children.add(pronounciationWidget);
+                        }
+
+                        // category
+                        if (definition.category != null) {
+                          children.add(Text(
+                              definition.category,
+                              style: TextStyle(color: Colors.purple)
+                          ));
+                          children.add(Container(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                          ));
+                        }
+
+                        children.addAll(_buildFlashCardDefinitions(definition.definitions));
                       }
-
-                      // category
-                      if (definition.category != null) {
-                        children.add(Text(
-                            definition.category,
-                            style: TextStyle(color: Colors.purple)
-                        ));
-                        children.add(Container(
-                          padding: EdgeInsets.only(bottom: 8.0),
-                        ));
+                      if (wordDefinition.translation != null) {
+                        children.add(
+                          Text(
+                            wordDefinition.translation,
+                          ),
+                        );
                       }
-
-                      children.addAll(_buildFlashCardDefinitions(definition.definitions));
-                    }
-
-                    if (wordDefinition.translation != null) {
+                    } else {
                       children.add(
-                        Text(
-                          wordDefinition.translation,
+                        Container(
+                          padding: EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            'Definition not found',
+                          ),
                         ),
                       );
                     }

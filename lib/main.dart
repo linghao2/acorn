@@ -7,6 +7,7 @@ import 'settings.dart';
 import 'test_view.dart';
 import 'word_data.dart';
 import 'word_list.dart';
+import 'globals.dart';
 
 const darkYellowColor = Color(0xFFB20A);
 
@@ -108,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       drawer: Drawer(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -162,6 +163,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       appBar: new AppBar(
         elevation: 0.0,
+        iconTheme: IconThemeData(
+          color: Globals.darkYellow,
+        ),
         actions: <Widget> [
           IconButton(
             icon: Image.asset('graphics/cardsIcon.png'),

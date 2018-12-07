@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'card_definition.dart';
 import 'word_data.dart';
 import 'globals.dart';
@@ -17,21 +19,37 @@ class WordListState extends State<WordList>  {
   @override
   void initState() {
     super.initState();
-
-    // TODO grab sortBy state
-    _orderBy = OrderBy.Score;
   }
 
   void _sortList(OrderBy orderBy) {
     setState(() {
       _orderBy = orderBy;
+      storeOrderBy(orderBy);
     });
+  }
+
+  Future<List<WordInfo>> getWordInfos(OrderBy orderBy) async {
+    print('getWordInfos!!!!!!  ${orderBy}');
+    if (orderBy == null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      print(prefs.getInt('OrderBy'));
+      int orderByIndex = prefs.getInt('OrderBy') ?? 0;
+      _orderBy = OrderBy.values[orderByIndex];
+    }
+
+    return DbHelper().getWordInfos(_orderBy);
+  }
+
+  storeOrderBy(OrderBy orderBy) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print('storeOrderBy!!!!!!  ${orderBy.index}');
+    prefs.setInt('OrderBy', orderBy.index);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List>(
-      future: DbHelper().getWordInfos(_orderBy),
+      future: getWordInfos(_orderBy),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           _wordInfos = snapshot.data;
@@ -140,22 +158,6 @@ class WordListState extends State<WordList>  {
                 fontWeight: FontWeight.bold,
                 fontSize: 22.0,
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text('boo'),
-          Text(
-            'Learn words more efficiently with Acorn',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 22.0,
             ),
           ),
         ],
