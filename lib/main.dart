@@ -3,7 +3,7 @@ import 'material_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle ;
 
-import 'settings.dart';
+import 'new_settings.dart';
 import 'test_view.dart';
 import 'word_data.dart';
 import 'word_list.dart';
@@ -16,9 +16,9 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Acorn',
-      theme: new ThemeData(
+      theme: ThemeData(
         //buttonColor: new Color(0xFFFFF2B6),
         primaryColor: Color(0xFFF4F4F4),
         canvasColor: Color(0xFFF4F4F4),
@@ -76,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
           return new Scaffold(
             appBar: new AppBar(
               title: Text('Settings'),
+              elevation: 0.0,
               leading: IconButton(
                   icon: const Icon(Icons.settings,
                     color: Color(0xFFFFB20A)),
@@ -95,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(18.0),
-                      child: new SettingsView(),
+                      child: new SettingsPage(),
                     )
                 ),
               ],

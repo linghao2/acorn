@@ -8,7 +8,9 @@ class Globals {
   static Color backgroundYellow = Color(0xFFFFF2B6);
   static Color background = Color(0xFFF4F4F4);
 
+  static String noTranslation = 'none';
   static var supportedTranslation = {
+    noTranslation: 'None',
     'zh-Hans': 'Chinese Simplified',
     'zh-Hant': 'Chinese Traditional',
     'es':'Spanish',
@@ -22,4 +24,8 @@ class Globals {
     'de': 'German',
     'vi': 'Vietnamese',
   };
+
+  // Preferences keys
+  static String PreferenceTestWordCount = 'TestWordCount';
+  static String PreferenceTranslateToLang = 'TranslateToLang';
 }

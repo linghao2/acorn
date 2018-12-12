@@ -4,6 +4,9 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:synchronized/synchronized.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'globals.dart';
 
 
 enum FeedbackScore {Unspecified, Yes, No}
@@ -367,7 +370,14 @@ class WordData {
   static Future<WordDefinition> fetchDefinition(String word) async {
     print('fetchDefinition for $word');
     WordDefinition definition = await DbHelper().getDefinition(word);
-    definition.translation = await DbHelper().getTranslated(word, 'zh-Hans');
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String lang = (prefs.getString(Globals.PreferenceTranslateToLang) ?? Globals.noTranslation);
+    if (lang != null && lang != Globals.noTranslation) {
+      print('getting translation $lang');
+      definition.translation = await DbHelper().getTranslated(word, lang);
+    }
+    print('returning from fetchDefinition');
     return definition;
   }
 

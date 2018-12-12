@@ -41,7 +41,7 @@ class CardDefinitionView extends StatelessWidget {
 
   void _playUrl(String url) async {
     AudioPlayer.logEnabled = true;
-    AudioPlayer audioPlayer = new AudioPlayer();
+    AudioPlayer audioPlayer = AudioPlayer();
     int result = await audioPlayer.play(url);
     if (result == 1) {
       await audioPlayer.setReleaseMode(ReleaseMode.STOP);
@@ -124,27 +124,27 @@ class CardDefinitionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _bigFont = const TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0);
-    return new Container(
-      child: new Card(
-        color: isFlashCard ? new Color(0xFFFFFAE1) : Colors.white,
+    return Container(
+      child: Card(
+        color: isFlashCard ? Color(0xFFFFFAE1) : Colors.white,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          new Container(
+          Container(
             margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-            child: new Text(
+            child: Text(
               wordInfo.word,
               style: _bigFont,
             ),
           ),
-          new Expanded(
+          Expanded(
             child: FutureBuilder(
               future: WordData.fetchDefinition(wordInfo.word),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     WordDefinition wordDefinition = snapshot.data;
-                    List<Widget> children = new List<Widget>();
+                    List<Widget> children = List<Widget>();
 
                     if (wordDefinition.entries != null) {
                       for (LexicalDefinition definition in wordDefinition.entries) {
@@ -169,8 +169,14 @@ class CardDefinitionView extends StatelessWidget {
                       }
                       if (wordDefinition.translation != null) {
                         children.add(
-                          Text(
-                            wordDefinition.translation,
+                          Container(
+                            padding: EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              wordDefinition.translation,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
                           ),
                         );
                       }

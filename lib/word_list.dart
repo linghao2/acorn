@@ -29,10 +29,8 @@ class WordListState extends State<WordList>  {
   }
 
   Future<List<WordInfo>> getWordInfos(OrderBy orderBy) async {
-    print('getWordInfos!!!!!!  ${orderBy}');
     if (orderBy == null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      print(prefs.getInt('OrderBy'));
       int orderByIndex = prefs.getInt('OrderBy') ?? 0;
       _orderBy = OrderBy.values[orderByIndex];
     }
