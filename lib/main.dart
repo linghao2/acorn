@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'material_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle ;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pure_mixpanel/pure_mixpanel.dart';
 
 import 'new_settings.dart';
 import 'test_view.dart';
@@ -44,8 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<String> _dictionaryValues = List<String>();
 
-  final _formKey = new GlobalKey<FormState>();
-
   void initState() {
     super.initState();
 
@@ -53,7 +53,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _performTest() async {
-    List<WordInfo> testWords = await DbHelper().selectWordsToTest(4);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var _wordCountValue = (prefs.getInt(Globals.PreferenceTestWordCount) ?? 8);
+    List<WordInfo> testWords = await DbHelper().selectWordsToTest(_wordCountValue);
+
+    Mixpanel(token: Globals.MixPanelToken).track(
+      'performTest',
+      properties: {'count' : '$_wordCountValue'},
+    );
 
     await Navigator.of(context).push(
       MaterialPageRoute<void>(

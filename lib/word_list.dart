@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pure_mixpanel/pure_mixpanel.dart';
 
 import 'card_definition.dart';
 import 'word_data.dart';
@@ -39,6 +40,11 @@ class WordListState extends State<WordList>  {
   }
 
   storeOrderBy(OrderBy orderBy) async {
+    Mixpanel(token: Globals.MixPanelToken).track(
+      'changeOrderBy',
+      properties: {'orderBy' : '$orderBy'},
+    );
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print('storeOrderBy!!!!!!  ${orderBy.index}');
     prefs.setInt('OrderBy', orderBy.index);

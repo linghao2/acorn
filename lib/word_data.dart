@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:synchronized/synchronized.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pure_mixpanel/pure_mixpanel.dart';
 
 import 'globals.dart';
 
@@ -66,6 +67,11 @@ class DbHelper {
   }
 
   void insert(WordInfo wordInfo) async {
+    Mixpanel(token: Globals.MixPanelToken).track(
+      'insertWord',
+      properties: {'word' : '${wordInfo.word}'},
+    );
+
     var db = await getDb();
     db.insert("Words", wordInfo.toMap());
   }

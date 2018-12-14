@@ -8,6 +8,8 @@ class Globals {
   static Color backgroundYellow = Color(0xFFFFF2B6);
   static Color background = Color(0xFFF4F4F4);
 
+  static String MixPanelToken = '5cd97a97d0c5047369b4839b275ec107';
+
   static String noTranslation = 'none';
   static var supportedTranslation = {
     noTranslation: 'None',
