@@ -83,19 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
           return new Scaffold(
             appBar: new AppBar(
               title: Text('Settings'),
+              titleSpacing: 0.0,
               elevation: 0.0,
-              leading: IconButton(
-                  icon: const Icon(Icons.settings,
-                    color: Color(0xFFFFB20A)),
-                  onPressed: null),
-              actions: <Widget> [
-                new IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: (){
-                      Navigator.maybePop(context);
-                    }
-                ),
-              ],
             ),
 
             body: new Row(
@@ -103,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(18.0),
-                      child: new SettingsPage(),
+                      child: SettingsPage(),
                     )
                 ),
               ],
@@ -127,26 +116,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Color(0xFFFFFAE2),
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Image.asset('graphics/acorn.png'),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text(
-                        'Learn words more efficiently with Acorn',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                        ),
+                  Image.asset('graphics/acorn45.png'),
+                  Center(
+                    child: Text(
+                      'Acorn Version 0.1',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black38,
+                        fontSize: 12.0,
                       ),
                     ),
-
                   ),
                 ],
               )
             ),
             ListTile(
-              title: Text('Settings'),
+              title: Text(
+                  'Settings',
+                style: TextStyle(
+                  fontSize: 20.0,
+                )
+              ),
               leading: Icon(
                 Icons.settings,
                 color: Color(0xFFFFB20A),
@@ -156,16 +148,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 _settings();
               },
             ),
-            ListTile(
-              title: Text('Debug'),
-              leading: Icon(
-                Icons.bug_report,
-                color: Color(0xFFFFB20A),
-              ),
-              onTap: () {
-                DbHelper().dumpTables();
-              },
-            ),
+//            ListTile(
+//              title: Text('Debug'),
+//              leading: Icon(
+//                Icons.bug_report,
+//                color: Color(0xFFFFB20A),
+//              ),
+//              onTap: () {
+//                DbHelper().dumpTables();
+//              },
+//            ),
           ]
         ),
       ),
@@ -182,12 +174,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: WordList(),
-        floatingActionButton: new FloatingActionButton(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: FloatingActionButton(
           onPressed: () {
             _showMaterialSearch(context);
           },
           tooltip: 'Search',
           backgroundColor: Color(0xFFFFB20A),
+          foregroundColor: Colors.black,
           child: new Icon(Icons.search),
         )
     );

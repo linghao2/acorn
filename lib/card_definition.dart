@@ -71,30 +71,35 @@ class CardDefinitionView extends StatelessWidget {
     return null;
   }
 
-  Widget _buildIconButton(IconData icon, Color color, String text, FeedbackScore score) {
+  Widget _buildIconButton(String iconPath, Color color, String text, FeedbackScore score) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular((10.0))),
+          ),
           child: MaterialButton(
             color: Colors.white,
             splashColor: color,
+            elevation: 0.0,
             child: Column(
               children: <Widget>[
                 Container(
                   padding: const EdgeInsets.only(bottom: 4.0),
-                  //child: Image.asset(iconPath),
-                  child: Icon(
-                    icon,
-                    color: color,
-                  ),
+                  child: Image.asset(iconPath),
+//                  child: Icon(
+//                    icon,
+//                    color: color,
+//                  ),
                 ),
                 Text(
                   text,
                   style: TextStyle(
-                    fontSize: 10.0,
+                    fontSize: 11.0,
                   ),
                 ),
               ],
@@ -113,9 +118,9 @@ class CardDefinitionView extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildIconButton(Icons.check, Colors.green[400], 'Got it', FeedbackScore.Yes),
+          _buildIconButton('graphics/iconGotIt.png', Colors.green[400], 'Got it', FeedbackScore.Yes),
           //Container(width: 8.0),
-          _buildIconButton(Icons.clear, Colors.red[400], 'Don\'t know', FeedbackScore.No),
+          _buildIconButton('graphics/iconDontKnow.png', Colors.red[400], 'Don\'t know', FeedbackScore.No),
         ],
       );
     }
